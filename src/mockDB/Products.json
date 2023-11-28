@@ -1,0 +1,96 @@
+[
+  {
+    "id": 1,
+    "title": {
+      "title": "Vestido corto satinado",
+      "description": "Vestido corto satinado asargado por delante, con un cuello camisero abierto, de manga larga, una falda acampanada y falsos botones de presión en la cintura. ",
+      "code": "abc1",
+      "price": 60500,
+      "stock": 16,
+      "status": true,
+      "category": "vestidos",
+      "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwc516a05f/images/h13/Sandro_SFPRO03338-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000"
+    }
+  },
+  {
+    "id": 2,
+    "title": "Vestido corto de terciopelo",
+    "description": "Vestido corto de terciopelo con cuello decorado con perlas, mangas largas con puños satinados con botones y una falda acampanada. ",
+    "price": 72300,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwc516a05f/images/h13/Sandro_SFPRO03338-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc2",
+    "stock": 14
+  },
+  {
+    "id": 3,
+    "title": "Camisa corta oversize",
+    "description": "Camisa corta oversize de manga larga voluminosa con puños ajustados y cuello en contraste, más larga en la parte trasera y sublimada con finas rayas y strass en toda prenda.",
+    "price": 32300,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwb6ad4d62/images/h13/Sandro_SFPCM00942-40_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc3",
+    "stock": 15
+  },
+  {
+    "id": 4,
+    "title": "Camisa de lunares",
+    "description": "Camisa de lunares con cuello mao de terciopelo en contraste, mangas largas con puños abotonados y cierre de botones con tapeta recubierta. ",
+    "price": 35800,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw8df23484/images/h13/Sandro_SFPCM01000-A189_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc4",
+    "stock": 10
+  },
+  {
+    "id": 5,
+    "title": "Chaqueta corta de tweed pata de gallo",
+    "description": "Chaqueta corta y estructurada de manga larga de tweed con motivo pata de gallo, con cierre de botones y bolsillos con solapa en la cintura. ",
+    "price": 68800,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw1aa92d6c/images/h13/Sandro_SFPVE00870-420_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc5",
+    "stock": 12
+  },
+  {
+    "id": 6,
+    "title": "Chaqueta de traje de pata de gallo",
+    "description": "Chaqueta de traje en mezcla de lana con estampado de pata de gallo, cuello alto con vuelta, mangas largas y bolsillos ribeteados en la cintura. ",
+    "price": 67700,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw1aa92d6c/images/h13/Sandro_SFPVE00870-420_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc6",
+    "stock": 9
+  },
+  {
+    "id": 7,
+    "title": "Pantalón con bandas laterales",
+    "description": "Pantalón ancho informal de mezcla de lana con bandas en contraste de grogrén en los laterales, cintura elástica y una falsa bragueta.  ",
+    "price": 42700,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw9e50d29b/images/h13/Sandro_SFPPA01194-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc7",
+    "stock": 22
+  },
+  {
+    "id": 8,
+    "title": "Pantalón cargo de terciopelo",
+    "description": "Pantalón cargo de terciopelo con pliegues, bolsillos con solapa, bolsillos italianos y trabilla a presión en el tobillo. ",
+    "price": 53800,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw0106aa7d/images/h13/Sandro_SFPPA01283-70_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc8",
+    "stock": 18
+  },
+  {
+    "id": 9,
+    "title": "Falda corta de tweed",
+    "description": "Falda corta y recta de tweed con bolsillos ribeteados y botones de fantasía en la parte delantera. ",
+    "price": 42200,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw7a77eae5/images/h13/Sandro_SFPJU00990-B273_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc9",
+    "stock": 19
+  },
+  {
+    "id": 10,
+    "title": "Falda larga plisada",
+    "description": "Falda larga ceñida en la parte superior y plisada en la parte inferior, abotonada por delante y con rajas por delante y por detrás. ",
+    "price": 37200,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwd539908c/images/h13/Sandro_SFPJU00910-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc10",
+    "stock": 23
+  }
+]
