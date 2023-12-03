@@ -23,12 +23,14 @@
   },
   {
     "id": 3,
-    "title": "Camisa corta oversize",
-    "description": "Camisa corta oversize de manga larga voluminosa con puños ajustados y cuello en contraste, más larga en la parte trasera y sublimada con finas rayas y strass en toda prenda.",
-    "price": 32300,
-    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwb6ad4d62/images/h13/Sandro_SFPCM00942-40_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
-    "code": "abc3",
-    "stock": 15
+    "title": "Falda corta de punto",
+    "description": "Falda corta de punto fantasía sublimada con bolsillos con botones.",
+    "price": 23670,
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw5654a542/images/h13/Sandro_SFPJU00796-111_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000",
+    "code": "abc123",
+    "stock": 15,
+    "status": false,
+    "category": "faldas"
   },
   {
     "id": 4,

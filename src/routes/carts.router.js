@@ -38,6 +38,24 @@ cartsRouter.get("/:cid", async (req, res) => {
     }
 });
 
+// endpoint para obtener todos los carritos
+
+cartsRouter.get("/", async (req, res) => {
+    try {
+
+        const cart = await cartsService.getCarts();
+    
+        if (cart) {
+            res.send({carts: cart})
+        } else {
+            res.status(400).send({status:"error", message:"Error! No se encuentra el Id de carrito solicitado."});
+        } 
+    } catch (error) {
+        console.error("Error en la ruta GET /carts/", error);
+        res.status(500).send({status: "error", message: "Error del servido al obtener los carritos."})
+    }
+});
+
 
 // endpoint para agregar un producto a un carrito 
 
