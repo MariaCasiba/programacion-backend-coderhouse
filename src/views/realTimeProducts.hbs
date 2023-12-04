@@ -1,0 +1,61 @@
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="m-3 p-2">Real Time Products</h1>  
+            <h5 class="p-2 m-3">Agregar nuevo producto:</h5>   
+            
+                <form id="addProductForm" class="m-2 p-2">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="description">
+                    </div>
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="code">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="price">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="text" class="form-control" id="stock">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Categoría</label>
+                        <input type="text" class="form-control" id="category">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar producto</button>
+                </form>
+            
+            <h2 class="m-3 p-2">Productos</h2>
+            <ul class="list-group m-2 p-2" id="rt-products">
+                {{#each realTimeProducts}}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto" id="{{this.id}}">
+                        <div class="fw-bold fs-5">Nombre: {{this.title}}</div>
+                        <div>
+                            <b>Id:</b> {{this.id}}
+                            <b>Descripción:</b> {{this.description}}
+                            <b>Code:</b> {{this.code}}
+                            <b>Precio: $</b> {{this.price}}
+                            <b>Stock:</b> {{this.stock}} 
+                            <b>Categoría:</b> {{this.category}} 
+                        </div>
+                        <button class="delete-button btn btn-primary my-3" data-product-id="{{this.id}}">Eliminar</button>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script src="socket.io/socket.io.js"></script>
+<script src="js/realTimeProducts.js"></script>

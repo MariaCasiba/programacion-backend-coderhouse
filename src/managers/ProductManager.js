@@ -63,7 +63,7 @@ export class ProductManager {
 
 // agregar producto
 
-    async addProduct({title, description, price, thumbnails, code, stock}) {
+    async addProduct({title, description, code, price, status, stock, category, thumbnails}) {
         try {
             if (await this.isCodeRepeated(code)) {
                 console.log("Error! Código repetido");
@@ -74,10 +74,12 @@ export class ProductManager {
                 id: await this.getId(),
                 title,
                 description,
-                price,
-                thumbnails,
                 code,
-                stock
+                price,
+                status,
+                stock,
+                category,
+                thumbnails
             };
     
                 this.products = await this.getProducts();

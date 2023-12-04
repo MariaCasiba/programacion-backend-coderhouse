@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="m-3 p-2">{{title}}</h1>
+            <div class="list-group m-2 p-2" id="rt-products">
+                {{#each products}}
+                <div class="list-group-item">
+                    <div class="ms-2 me-auto col-12" id="{{this.id}}">
+                        <h5 class="fw-bold">Nombre: {{this.title}}</h5>
+                        <p><b>Id:</b> {{this.id}}</p>
+                        <p><b>Descripción:</b> {{this.description}}</p>
+                        <p><b>Code:</b> {{this.code}}</p>
+                        <p><b>Precio:</b> {{this.price}}</p>
+                        <p><b>Stock:</b> {{this.stock}}</p>
+                        <p><b>Categoría:</b> {{this.category}}</p>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
