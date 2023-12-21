@@ -9,23 +9,26 @@ socket.emit("ClientMessage", "Soy el cliente, estoy usando socket");
 
 // obtengo los datos del formulario RealTimeProducts y emito addProduct
 const addProductForm = document.getElementById('addProductForm');
-    addProductForm.addEventListener('submit', event => {
+    addProductForm.addEventListener('submit', async (event) => {
         event.preventDefault();
     
+        
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const code = document.getElementById('code').value;
         const price = document.getElementById('price').value;
         const stock = document.getElementById('stock').value;
         const category = document.getElementById('category').value;
+
     
         const product = {
+            
             title: title,
             description: description,
             code: code,
             price: price,
             stock: stock,
-            category: category
+            category: category,
         }
     
         socket.emit('addProduct', { product });
@@ -35,25 +38,26 @@ const addProductForm = document.getElementById('addProductForm');
 
 // escucha productAdded 
     socket.on('productAdded', (newProduct) => {
+
+        console.log("nuevo producto agregado: ", newProduct);
         
         const rtProductList = document.getElementById("rt-products");
         
         const productItem = document.createElement("li");
         productItem.className = "list-group-item d-flex justify-content-between align-items-start";
         productItem.innerHTML = `
-            <div class="ms-2 me-auto" id="${newProduct.id}">
-                <div class="fw-bold fs-5">Nombre:
+            <div class="ms-2 me-auto" id="${newProduct._id}">
+                <div class="fw-bold fs-6">Nombre:
                     ${newProduct.title}
                 </div>
                 <div>
-                    <b>Id:</b> ${newProduct.id}
                     <b>Descripción:</b> ${newProduct.description}
                     <b>Precio:</b> ${newProduct.price}
                     <b>Code:</b> ${newProduct.code}
                     <b>Stock:</b> ${newProduct.stock}
                     <b>Categoría:</b> ${newProduct.category}
                 </div>
-                <button class="delete-button btn btn-primary my-3" data-product-id="${newProduct.id}">Eliminar</button>
+                <button class="delete-button btn btn-primary my-3" data-product-id="${newProduct._id}">Eliminar</button>
             </div>`;
             
         rtProductList.appendChild(productItem);    
@@ -64,7 +68,7 @@ const addProductForm = document.getElementById('addProductForm');
     const rtProductList = document.getElementById("rt-products");
     rtProductList.addEventListener("click", (event) => {
         if (event.target.classList.contains('delete-button')) {
-            const productId = parseInt(event.target.dataset.productId);
+            const productId = event.target.dataset.productId;
             socket.emit ('deleteProduct', productId);
         }
     });

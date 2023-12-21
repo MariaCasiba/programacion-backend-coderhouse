@@ -1,37 +1,28 @@
 import { Router } from "express";
-import { CartManager } from "../../managers/CartManager.js";
+import { CartService } from "../../daos/mongo/cartsDaoMongo.js";
 
 const cartsRouter = Router();
 
-const cartsService = new CartManager();
+const cartsService = new CartService();
 
 // endpoint para crear un carrito
 
 cartsRouter.post("/", async (req, res) => {
   try {
-    if (await cartsService.newCart()) {
-      res
-        .status(200)
-        .send({
-          status: "success",
-          message: "El carrito se creó correctamente",
-        });
+
+    const newCart = await cartsService.createCart();
+
+    if(newCart) {
+      res.status(200).send({ status: "success", message: "El carrito se creó correctamente"});
     } else {
-      res
-        .status(500)
-        .send({
-          status: "error",
-          message: "Error! No se pudo crear el carrito",
-        });
+      res.status(500).send({ status: "error", message: "Error! No se pudo crear el carrito"});
     }
+    
   } catch (error) {
     console.error("Error en la ruta POST /carts", error);
-    res
-      .status(500)
-      .send({
-        status: "error",
-        message: "Error del servidor al crear el carrito.",
-      });
+    res.status(500).send({
+      status: "error", message: "Error del servidor al crear el carrito.",
+    });
   }
 });
 
@@ -40,26 +31,21 @@ cartsRouter.post("/", async (req, res) => {
 cartsRouter.get("/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
-    const cart = await cartsService.getCartById(parseInt(cid));
+    const cart = await cartsService.getCartById(cid);
 
     if (cart) {
       res.send({ products: cart.products });
     } else {
-      res
-        .status(400)
-        .send({
-          status: "error",
-          message: "Error! No se encuentra el Id de carrito solicitado.",
-        });
+      res.status(400).send({
+        status: "error", message: "Error! No se encuentra el Id de carrito solicitado.",
+      });
     }
+
   } catch (error) {
     console.error("Error en la ruta GET /carts/:cid", error);
-    res
-      .status(500)
-      .send({
-        status: "error",
-        message: "Error del servido al obtener el carrito solicitado.",
-      });
+    res.status(500).send({
+      status: "error", message: "Error del servido al obtener el carrito solicitado.",
+    });
   }
 });
 
@@ -67,26 +53,22 @@ cartsRouter.get("/:cid", async (req, res) => {
 
 cartsRouter.get("/", async (req, res) => {
   try {
-    const cart = await cartsService.getCarts();
+    const carts = await cartsService.getCarts();
 
-    if (cart) {
-      res.send({ carts: cart });
+    if (carts) {
+      res.send({ carts: carts });
     } else {
-      res
-        .status(400)
-        .send({
-          status: "error",
-          message: "Error! No se encuentra el Id de carrito solicitado.",
-        });
+      res.status(400).send({
+        status: "error", message: "Error! No se encuentra el Id de carrito solicitado.",
+      });
     }
+
   } catch (error) {
     console.error("Error en la ruta GET /carts/", error);
-    res
-      .status(500)
-      .send({
-        status: "error",
-        message: "Error del servido al obtener los carritos.",
-      });
+    res.status(500).send({
+      status: "error",
+      message: "Error del servido al obtener los carritos.",
+    });
   }
 });
 
@@ -95,37 +77,45 @@ cartsRouter.get("/", async (req, res) => {
 cartsRouter.post("/:cid/products/:pid", async (req, res) => {
   try {
     const { cid, pid } = req.params;
-    const cart = await cartsService.getCartById(parseInt(cid));
 
-    if (!cart) {
-      return res
-        .status(404)
-        .send({ status: "error", message: "Carrito no encontrado." });
-    }
+    const productToCart = await cartsService.addProductToCart(cid, pid);
 
-    const productExists = cart.products.find(
-      (product) => product.product === pid
-    );
-
-    if (productExists) {
-      productExists.quantity += 1 || 1;
+    if (productToCart) {
+      return res.status(200).send({ status: "success", message: "Producto agregado al carrito" });
     } else {
-      cart.products.push({ product: pid, quantity: 1 });
+      res.status(404).send({ status: "error", message: "Error! No se pudo agregar el producto al carrito"})
     }
 
-    await cartsService.saveCart();
-    res
-      .status(200)
-      .send({ status: "success", message: "Producto agregado al carrito" });
+
   } catch (error) {
     console.error("Error en la ruta POST /carts/:cid/products/:pid", error);
-    res
-      .status(500)
-      .send({
-        status: "error",
-        message: "Error del servido al agregar producto al carrito",
-      });
+    res.status(500).send({status: "error",message: "Error del servido al agregar producto al carrito",
+    });
   }
 });
+
+
+cartsRouter.delete("/:cid", async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const deletedCart = await cartsService.deleteCartById(cid);
+
+    if (deletedCart) {
+      res.status(200).send({
+        status: "success", message: "Carrito eliminado correctamente",
+      });
+    } else {
+      res.status(404).send({
+        status: "error", message: "No se encontró el carrito a eliminar",
+      });
+    }
+  } catch (error) {
+    console.error("Error en la ruta DELETE /carts/:cid", error);
+    res.status(500).send({
+      status: "error", message: "Error del servidor al eliminar el carrito",
+    });
+  }
+});
+
 
 export default cartsRouter;
