@@ -1,6 +1,11 @@
 import { messageModel } from "./models/message.model.js";
 
 export class ChatService {
+
+    constructor(socket) {
+        this.socket = socket;
+    }
+
     async getMessages() {
         try {
             return await messageModel.find();
@@ -11,9 +16,12 @@ export class ChatService {
         }
     }
 
+
     async createMessage(message) {
         try {
-            return await messageModel.create(message);
+            const newMessage = await messageModel.create(message);
+            this.socket.emit("newMessage", newMessage); // Emite el nuevo mensaje a todos los clientes
+            return newMessage;
         } catch (error) {
             console.error("Error al crear mensaje", error);
             throw error;

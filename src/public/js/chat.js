@@ -1,3 +1,4 @@
+
 const socket = io();
 const messages = document.getElementById("messages");
 const user = document.getElementById("user");
@@ -9,12 +10,12 @@ const btnSendMessage = document.getElementById("btnSendMessage");
 socket.on("connect", () => {
     console.log("Conexión establecida con el servidor!"); 
     socket.emit("message", "Hola, soy un nuevo cliente!");
-    socket.emit("newMessage", { user: "Usuario", message: "Mensaje" });
 })
 
 
 
 // Manejar mensajes recibidos
+
 socket.on("messages", (data) => {
     let salida = "";
 
@@ -37,4 +38,13 @@ socket.on("messages", (data) => {
         user.value = "";
         message.value = "";
     }
+    });
+
+    // Manejar nuevo mensaje recibido
+
+    socket.on("newMessage", (data) => {
+        // Agregar el nuevo mensaje a la interfaz de usuario
+        const newMessageHTML = `<p class="card-text"><b>${data.user}:</b> <span class="fst-italic">${data.message}</span></p>`;
+        messages.innerHTML += newMessageHTML;
+    
 });

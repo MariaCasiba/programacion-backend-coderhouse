@@ -24,15 +24,7 @@ app.use(express.static(__dirname + "/public"));
 
 
 // motor de plantilla handlebars
-/*
-app.engine(
-  "hbs",
-  handlebars.engine({
-    extname: ".hbs",
-    handlebars: { ignoreMissing: true },
-  })
-);
-*/
+
 app.engine('hbs', exphbs({
   extname: '.hbs',
   runtimeOptions: {
@@ -125,7 +117,7 @@ socketServer.on("connection", async (socket) => {
   })
 
 
-  const chatService = new ChatService();
+  const chatService = new ChatService(socket);
 
   const  messages = await chatService.getMessages();
   socket.emit("messages", messages);
