@@ -1,5 +1,6 @@
 import express from "express";
-import handlebars from "express-handlebars";
+import exphbs from "express-handlebars";
+import Handlebars from "handlebars";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 //import { ProductManager } from "./daos/file/ProductManagerFs.js";
@@ -23,12 +24,24 @@ app.use(express.static(__dirname + "/public"));
 
 
 // motor de plantilla handlebars
+/*
 app.engine(
   "hbs",
   handlebars.engine({
     extname: ".hbs",
+    handlebars: { ignoreMissing: true },
   })
 );
+*/
+app.engine('hbs', exphbs({
+  extname: '.hbs',
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
+}));
+
+
 app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 

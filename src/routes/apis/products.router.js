@@ -5,16 +5,18 @@ const productsRouter = Router();
 
 const productsService = new ProductService();
 
-// endpoint para obtener todos los productos o un número limitado
+// endpoint para obtener los productos
 
 productsRouter.get("/", async (req, res) => {
   try {
-    let { limit } = req.query;
-    const products = await productsService.getProducts(limit);
+
+    const products = await productsService.getProducts(req.query);
+    console.log('req.query:', req.query);
+    
     res.send({products});
 
   } catch (error) {
-    console.error("Error al obtener los productos en la ruta GET /products", error);
+    console.error("Error al obtener los productos en la ruta GET", error);
     res.status(500).send({status: "error", message: "Error del servidor al obtener los productos"});
   }
 });
@@ -27,7 +29,7 @@ productsRouter.get("/:pid", async (req, res) => {
     const product = await productsService.getProductById(pid);
 
     if(product) {
-      res.send({product});
+      res.send({status: "success", payload: product });
     } else {
       res.status(404).send({status: "error", message: "Error! Producto con id no encontrado!"})
     }

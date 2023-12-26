@@ -7,7 +7,7 @@
     "price": 60500,
     "status": true,
     "stock": 16,
-    "category": "Vestidos",
+    "category": "vestidos",
     "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwc516a05f/images/h13/Sandro_SFPRO03338-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000"
   },
   {
@@ -18,7 +18,7 @@
     "price": 72300,
     "status": true,
     "stock": 15,
-    "category": "Vestidos",
+    "category": "vestidos",
     "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwc516a05f/images/h13/Sandro_SFPRO03338-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000"
   },
   {
@@ -45,14 +45,14 @@
   },
   {
     "id": 5,
-    "title": "Chaqueta corta de tweed pata de gallo",
-    "description": "Chaqueta corta y estructurada de manga larga de tweed con motivo pata de gallo, con cierre de botones y bolsillos con solapa en la cintura.  ",
+    "title": "Chaqueta corta de tweed",
+    "description": "Chaqueta corta de tweed a cuadros, con un gran cuello sastre, botonadura cruzada y bolsillos con solapa en la cintura. ",
     "code": "abc5",
     "price": 68700,
     "status": true,
     "stock": 19,
     "category": "abrigos",
-    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw1aa92d6c/images/h13/Sandro_SFPVE00870-420_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000"
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw919063c5/images/h13/Sandro_SFPVE00922-B168_V_1.jpg?sw=578&cx=221&cy=0&cw=1547&ch=2000"
   },
   {
     "id": 6,
@@ -108,5 +108,27 @@
     "stock": 12,
     "category": "faldas y shorts",
     "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwd539908c/images/h13/Sandro_SFPJU00910-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000"
+  },
+  {
+    "id": 11,
+    "title": "Camisa seda con cuello fruncido",
+    "description": "Camisa fluida seda, con cuello fruncido efecto punto smock y manga larga con puño fruncido.",
+    "code": "abc11",
+    "price": 57200,
+    "status": true,
+    "stock": 15,
+    "category": "camisas y tops",
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dw12be4e1b/images/h13/Sandro_SFPCM00517-11_V_1.jpg?sw=578&cx=221&cy=0&cw=1547&ch=2000"
+  },
+  {
+    "id": 12,
+    "title": "Vestido corto de encaje",
+    "description": "Vestido corto de encaje con forro, cuello alto con ribete de pedrería, manga larga semitransparente con puño elástico y falda fruncida y con volantes.",
+    "code": "abc12",
+    "price": 65400,
+    "status": true,
+    "stock": 12,
+    "category": "vestidos",
+    "thumbnails": "https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwa50ac62e/images/h13/Sandro_SFPRO03336-20_V_1.jpg?sw=578&cx=221&cy=0&cw=1547&ch=2000"
   }
 ]

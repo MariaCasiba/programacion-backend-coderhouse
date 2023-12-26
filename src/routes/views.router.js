@@ -11,7 +11,7 @@ const productService = new ProductService();
 // vista de handlebars para mostrar todos los productos
 router.get("/", async (req, res) => {
   try {
-    let products = await productService.getProducts();
+    let products = await productService.getProducts(req.query);
     res.render("home", { products } );
 
   } catch (error) {

@@ -8,16 +8,60 @@ export class ProductService {
         this.model = productModel;
     }
     // obtener todos los productos  
-        async getProducts(limit) {
-            try {
-                
-                return await limit? productModel.find().limit(limit) : productModel.find().lean();
+    async getProducts(params) {
 
-            } catch (error) {
-            console.error("Error al obtener todos los productos", error);
-            return [];
-            }
+        try {
+
+        let { limit, page, query, sort } = params;
+    
+        limit = limit ? parseInt(limit) : 10;
+        page = page ? parseInt(page) : 1;
+        query = query? JSON.parse(query) : {};
+    
+        if (sort === "asc") {
+            sort = 1;
+        } else if (sort === "desc") {
+            sort = -1;
+        } else {
+            sort = 0;
         }
+    
+        let products = await productModel.paginate(query, { limit: limit, page: page, sort: sort ? { price: sort } : {} });
+        let status = products ? "success" : "error";
+
+        let prevLink = products.hasPrevPage ? "http://localhost:8080?limit=" + limit + "&page=" + products.prevPage : null;
+        let nextLink = products.hasNextPage ? "http://localhost:8080?limit=" + limit + "&page=" + products.nextPage : null;
+    
+        return {
+            status: status,
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: prevLink,
+            nextLink: nextLink
+        };
+
+
+        } catch (error) {
+            console.error("Error al obtener los productos", error);
+            return  {
+                status: "error",
+                payload: [],
+                totalPages: 0,
+                prevPage: null,
+                nextPage: null,
+                page: 1,
+                hasPrevPage: false,
+                hasNextPage: false,
+                prevLink: null,
+                nextLink: null
+        };
+    }
+}
         
         // obtener producto por id
         async getProductById(pid) {
@@ -94,17 +138,6 @@ export class ProductService {
             return false;
             }
         }
-        
-        /*
-        async isCodeRepeated(code) {
-            try {
-                return await productModel.findOne({code:code}) || false;
-
-            } catch (error) {
-                console.error("Error al verificar la repetición del código", error);
-                return false;
-            }
-        }*/
         
         async isCodeRepeated(code) {
             try {
