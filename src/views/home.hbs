@@ -3,6 +3,11 @@
         <div class="col">
             <h1 class="m-3 p-3 text-center">Productos</h1>
         </div>
+        <div class="row">
+            <div class="col text-center m-3">
+                <button class="btn btn-dark" onclick="redirectToProducts()">Ir al e-commerce</button>
+            </div>
+        </div> 
     </div>
     <div class="row">
         {{#each products.payload}}
@@ -13,42 +18,16 @@
                         <img src="{{this.thumbnails}}" class="img-fluid" style="max-width: 180px" alt="{{this.title}}">
                         <h5 class="card-title">{{this.title}}</h5>
                         <p class="card-text-center">{{this.description}}</p>
-                        <p class="card-text-center">${{this.price}}</p>
+                        
                     </div>
                 </div>   
         </div>        
-        {{/each}}       
-    </div>
-    <div class="row d-flex">
-        <div class="col justify-content-center">
-            <nav>
-                <ul class="pagination justify-content-center">
-                    {{#if products.hasPrevPage}}
-                        <li class="page-item">
-                            <a class="page-link" href="{{products.prevLink}}"><<</a>
-                        </li>
-                    {{/if}}
-                    {{#if products.hasPrevPage}}
-                        <li class="page-item">
-                            <a class="page-link" href="{{products.prevLink}}">{{products.prevPage}}</a>
-                        </li>
-                    {{/if}}
-                    <li class="page-item">
-                        <a class="page-link">{{products.page}}</a>
-                    </li>
-                    {{#if products.hasNextPage}}
-                        <li class="page-item">
-                            <a class="page-link" href="{{products.nextLink}}">{{products.nextPage}}</a>
-                        </li>
-                    {{/if}}
-                    {{#if products.hasNextPage}}
-                        <li class="page-item">
-                            <a class="page-link" href="{{products.nextLink}}">>></a>
-                        </li>
-                    {{/if}}
-                </ul>
+        {{/each}}   
 
-        </div>
-    </div>     
-
+    </div>   
 </div>
+<script>
+    function redirectToProducts() {
+        window.location.href = '/products'; 
+    }
+</script>

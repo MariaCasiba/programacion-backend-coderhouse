@@ -1,0 +1,65 @@
+<div class="container-sm">
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="m-3 p-3">Productos</h1>
+        </div>
+    </div>
+    {{#if user}}
+
+    <div class="row">
+        <div class="col col-md-9 text-center">
+            <p>Bienvenido/a al e-commerce </p>
+        </div>
+        
+    </div>
+    {{/if }}
+    <div class=" row justify-content-center text-center">    
+        {{#each products.payload}}
+        <div class="col col-md-3 m-3">
+                <div class="card" id="{{this._id}}">
+                    <img src="{{this.thumbnails}}" class="card-img-top mx-auto d-block m-2" style="max-width: 180px" alt="{{this.title}}">
+                    <div class="card-body text-justify p-2 m-3">
+                        <h5 class="card-title m-2 p-3">{{this.title}}</h5>
+                        <p class="card-text">Precio: ${{this.price}}</p>
+                        <a href="/products/{{this._id}}" class="btn btn-outline-dark text-center m-2">Ver detalle</a>
+                        <button type="submit" class="btn btn-dark text-center m-2" onclick="agregarProductoAlCarrito('{{this._id}}')">Agregar al carrito</button>
+                    </div>
+                </div>                 
+        </div>  
+        {{/each}}       
+    </div>
+    <div class="row d-flex">
+        <div class="col justify-content-center">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {{#if products.hasPrevPage}}
+                        <li class="page-item">
+                            <a class="page-link" href="{{products.prevLink}}"><<</a>
+                        </li>
+                    {{/if}}
+                    {{#if products.hasPrevPage}}
+                        <li class="page-item">
+                            <a class="page-link" href="{{products.prevLink}}">{{products.prevPage}}</a>
+                        </li>
+                    {{/if}}
+                    <li class="page-item">
+                        <a class="page-link">{{products.page}}</a>
+                    </li>
+                    {{#if products.hasNextPage}}
+                        <li class="page-item">
+                            <a class="page-link" href="{{products.nextLink}}">{{products.nextPage}}</a>
+                        </li>
+                    {{/if}}
+                    {{#if products.hasNextPage}}
+                        <li class="page-item">
+                            <a class="page-link" href="{{products.nextLink}}">>></a>
+                        </li>
+                    {{/if}}
+                </ul>
+
+        </div>
+    </div>           
+
+</div>
+    
+<script src="/js/products.js"></script>

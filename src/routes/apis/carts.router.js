@@ -166,6 +166,8 @@ cartsRouter.put("/:cid/products/:pid", async (req, res) => {
       res.status(500).send({ status: "error", message: "Error del servidor al actualizar la cantidad del producto en el carrito." });
   }
 });
+
+/*
 // endpoint para eliminar un carrito
 cartsRouter.delete("/:cid", async (req, res) => {
   try {
@@ -188,6 +190,6 @@ cartsRouter.delete("/:cid", async (req, res) => {
     });
   }
 });
-
+*/
 
 export default cartsRouter;

@@ -2,13 +2,15 @@ import { Router } from "express";
 import exphbs from "express-handlebars";
 //import { ProductManager } from "../daos/file/ProductManagerFs.js";
 import { ProductService } from "../daos/mongo/productsDaoMongo.js";
+import { CartService } from "../daos/mongo/cartsDaoMongo.js";
 
 
 const router = Router();
 
 const productService = new ProductService(); 
+const cartService = new CartService();
 
-// vista de handlebars para mostrar todos los productos
+// vista de handlebars para mostrar el home
 router.get("/", async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
@@ -20,6 +22,32 @@ router.get("/", async (req, res) => {
   }
 });
 
+//vista de handlebars para products
+router.get("/products", async (req, res) => {
+  try {
+    let products = await productService.getProducts(req.query);
+    res.render("products", { products } );
+
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Error interno del server");
+  }
+  
+});
+
+//vista de handlebars para product
+router.get("/products/:pid", async (req, res) => {
+  const productId = req.params.pid;
+  let product = await productService.getProductById(productId);
+  res.render("product", { product })
+});
+
+//vista de handlebars para carrito
+router.get("/carts/:cid", async (req, res) => {
+  const cartId = req.params.cid;
+  let cart = await cartService.getCartById(cartId);
+  res.render("cart", { cart })
+})
 
 
 // vista de handlebars de productos en tiempo real 

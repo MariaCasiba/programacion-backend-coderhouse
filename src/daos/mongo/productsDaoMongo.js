@@ -29,8 +29,8 @@ export class ProductService {
         let products = await productModel.paginate(query, { limit: limit, page: page, sort: sort ? { price: sort } : {} });
         let status = products ? "success" : "error";
 
-        let prevLink = products.hasPrevPage ? "http://localhost:8080?limit=" + limit + "&page=" + products.prevPage : null;
-        let nextLink = products.hasNextPage ? "http://localhost:8080?limit=" + limit + "&page=" + products.nextPage : null;
+        let prevLink = products.hasPrevPage ? "http://localhost:8080/products?limit=" + limit + "&page=" + products.prevPage : null;
+        let nextLink = products.hasNextPage ? "http://localhost:8080/products?limit=" + limit + "&page=" + products.nextPage : null;
     
         return {
             status: status,
