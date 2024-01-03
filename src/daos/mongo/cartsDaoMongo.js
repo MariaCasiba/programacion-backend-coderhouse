@@ -14,7 +14,7 @@ export class CartService {
         try {
         const newCart = await cartModel.create({ products: [] });
         console.log("Carrito creado con id: ", newCart._id);
-        return newCart;
+        return newCart._id;
 
         } catch (error) {
         console.error("Error al crear el carrito", error);
@@ -27,16 +27,21 @@ export class CartService {
     // obtener carrito por id
     async getCartById(cid) {
         try {
-        const cart = await cartModel.findOne({_id: cid})
-        .populate('products.product');
+
+            if (!cid) {
+                console.log("Id del carrito es undefined.");
+                return null;
+            }
+
+            const cart = await cartModel.findOne({_id: cid}).populate('products.product');
         
 
-        if(!cart) {
-            console.log(`Carrito con id ${cid} no encontrado`);
-            return null;
-        }
+            if(!cart) {
+                console.log(`Carrito con id ${cid} no encontrado`);
+                return null;
+            }
 
-        return cart; 
+            return cart; 
 
         } catch (error) {
         console.error("Error al obtener el carrito por su id", error);
@@ -204,37 +209,35 @@ async updateAllProductsInCart(cid, updatedProducts) {
 
 
 // actualizar la cantidad de un producto en el carrito 
-async updateProductQuantity(cartId, productId, newQuantity) {
+
+async updateProductQuantity(cid, pid, quantity) {
     try {
-        const cart = await this.getCartById(cartId);
+        const cart = await this.getCartById(cid);
+
         if (!cart) {
-            console.log("No se encontró el carrito!");
+            console.log("No se encontró el carrito.");
             return false;
         }
 
-        const existingProduct = cart.products.find(item => item.product.toString() === productId);
+        const existingProduct = cart.products.find(item => item.product._id.toString() === pid);
 
         if (!existingProduct) {
             console.log("No se encontró el producto en el carrito.");
             return false;
+        }
 
-        } 
-
-        if (typeof newQuantity === 'number' && newQuantity >= 0) {
-            existingProduct.quantity = newQuantity;
-            await cartModel.updateOne({_id: cartId}, { products:cart.products});
-            console.log("La cantidad del producto fue actualizada correctamente.");
-            return true;
-
+        if (quantity >= 0) {
+            existingProduct.quantity = quantity;
         } else {
-            console.log("La nueva cantidad debe ser un número mayor o igual a 0.");
+            console.log("La nueva cantidad debe ser 0 o un número mayor a 0.");
             return false;
         }
 
-        
-
+        await cartModel.updateOne({ _id: cid }, { products: cart.products });
+        console.log("Cantidad de producto actualizada correctamente.");
+        return true;
     } catch (error) {
-        console.log("Error! No se pudo actualizar la cantidad del producto en el carrito.", error);
+        console.log("Error! No se pudo actualizar la cantidad del producto:", error);
         return false;
     }
 }

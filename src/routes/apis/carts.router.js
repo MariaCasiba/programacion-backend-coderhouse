@@ -5,23 +5,25 @@ const cartsRouter = Router();
 
 const cartsService = new CartService();
 
+
+
 // endpoint para crear un carrito
 cartsRouter.post("/", async (req, res) => {
   try {
-    const newCart = await cartsService.createCart();
+    const newCartId = await cartsService.createCart();
 
-    if(newCart) {
-      res.status(200).send({ status: "success", message: "El carrito se creó correctamente"});
+    if(newCartId) {
+      res.status(200).send({ status: "success", payload: { _id: newCartId }, message: "El carrito se creó correctamente" });
     } else {
       res.status(500).send({ status: "error", message: "Error! No se pudo crear el carrito"});
     }
     
   } catch (error) {
     console.error("Error en la ruta POST /carts", error);
-    res.status(500).send({ status: "error", message: "Error del servidor al crear el carrito.",
-    });
+    res.status(500).send({ status: "error", message: "Error del servidor al crear el carrito." });
   }
 });
+
 
 // endpoint para obtener carrito por id
 cartsRouter.get("/:cid", async (req, res) => {
@@ -150,22 +152,27 @@ cartsRouter.put("/:cid", async (req, res) => {
 // endpoint para actualizar la cantidad de un producto en el carrito
 cartsRouter.put("/:cid/products/:pid", async (req, res) => {
   try {
-      const { cid, pid } = req.params;
-      const newQuantity = req.body.quantity;
+    const { cid, pid } = req.params;
+    const newQuantity = req.body.quantity;
 
-      const result = await cartsService.updateProductQuantity(cid, pid, newQuantity);
+    if (typeof newQuantity !== 'number' || newQuantity < 0) {
+      return res.status(400).send({ status: "error", message: "La nueva cantidad debe ser un número mayor o igual a 0." });
+    }
 
-      if (result) {
-          res.status(200).send({ status: "success", message: "Cantidad de producto en el carrito actualizada correctamente." });
-      } else {
-          res.status(404).send({ status: "error", message: "Error! No se pudo actualizar la cantidad del producto en el carrito." });
-      }
+    const result = await cartsService.updateProductQuantity(cid, pid, newQuantity);
+
+    if (result) {
+      res.status(200).send({ status: "success", message: "Cantidad de producto en el carrito actualizada correctamente." });
+    } else {
+      res.status(404).send({ status: "error", message: "Error! No se pudo actualizar la cantidad del producto en el carrito." });
+    }
 
   } catch (error) {
-      console.error("Error en la ruta PUT /carts/:cid/products/:pid", error);
-      res.status(500).send({ status: "error", message: "Error del servidor al actualizar la cantidad del producto en el carrito." });
+    console.error("Error en la ruta PUT /carts/:cid/products/:pid", error);
+    res.status(500).send({ status: "error", message: "Error del servidor al actualizar la cantidad del producto en el carrito." });
   }
 });
+
 
 /*
 // endpoint para eliminar un carrito

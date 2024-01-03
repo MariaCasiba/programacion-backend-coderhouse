@@ -22,7 +22,7 @@
                         <h5 class="card-title m-2 p-3">{{this.title}}</h5>
                         <p class="card-text">Precio: ${{this.price}}</p>
                         <a href="/products/{{this._id}}" class="btn btn-outline-dark text-center m-2">Ver detalle</a>
-                        <button type="submit" class="btn btn-dark text-center m-2" onclick="agregarProductoAlCarrito('{{this._id}}')">Agregar al carrito</button>
+                        <button type="submit" class="btn btn-dark text-center m-2 addToCartBtn" data-productid="{{this._id}}">Agregar al carrito</button>
                     </div>
                 </div>                 
         </div>  
