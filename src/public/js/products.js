@@ -1,36 +1,5 @@
 
-/*
-const crearCarrito = async () => {
-    try {
-        const response = await fetch("/api/carts/", {
-            method: "POST",
-            headers: { "Content-type": "application/json; charset=UTF-8" }
-        });
-        
-        const data = await response.json();
-
-        if (data && data.status === "success") {
-            const cartId = data.payload && data.payload._id ? data.payload_id.toString() : null;
-
-            if (cartId) {
-                console.log("Carrito creado con id:", cartId);
-                localStorage.setItem("cart", JSON.stringify({ _id: cartId}));
-                return { _id: cartId };
-            } else {
-                console.log("Error al obtener el id del carrito desde la respuesta: ", data);
-                return null;
-            }
-            
-        } else {
-            console.log("Error al crear el carrito. Respuesta del servidor:", data);
-            return null;
-        }
-    } catch (error) {
-        console.log("Error en Crear el Carrito! " + error);
-        return null;
-    }
-}*/
-
+// crear carrito
 const crearCarrito = async () => {
     try {
         const response = await fetch("/api/carts/", {
@@ -41,7 +10,7 @@ const crearCarrito = async () => {
         const data = await response.json();
 
         if (data && data.status === "success" && data.payload && data.payload._id) {
-            const cartId = data.payload._id.toString(); // Convertir ObjectId a cadena
+            const cartId = data.payload._id.toString(); 
             console.log("Carrito creado con id:", cartId);
             localStorage.setItem("cart", JSON.stringify({ _id: cartId }));
             return { _id: cartId };
@@ -60,7 +29,7 @@ const crearCarrito = async () => {
     }
 }
 
-
+// obtener carrito por id
 const obtenerIdCarrito = async () => {
     try {
         if (!localStorage) {
@@ -68,22 +37,33 @@ const obtenerIdCarrito = async () => {
             return null;
         }
 
-        let cart = await crearCarrito();
+        const existingCart = localStorage.getItem("cart");
 
-        if (cart && cart._id) {
-            console.log("Id del carrito:", cart._id);
-            return cart._id;
-        } else {
-            console.log("No se pudo obtener el id del carrito.");
-            return null;
+        if (existingCart) {
+            const cart = JSON.parse(existingCart);
+            if (cart._id) {
+                console.log("Id del carrito existente: ", cart._id);
+                return cart._id.toString();
+            }
         }
+
+        const  newCart = await crearCarrito();
+
+        if (newCart && newCart._id) {
+            console.log("Id del nuevo carrito:", newCart._id);
+            return newCart._id.toString(); 
+        } else {
+            console.log("No se pudo obtener el id del carrito");
+            return null;
+        } 
+        
     } catch (error) {
         console.log("Error en obtener el Id del Carrito! " + error);
         return null;
     }
 }
 
-
+// agregar producto al carrito
 const agregarProductoAlCarrito = async (pid) => {
     try {
         let cid = await obtenerIdCarrito();
@@ -112,6 +92,7 @@ const agregarProductoAlCarrito = async (pid) => {
     }
 }
 
+// btn agregar al carrito
 document.addEventListener('DOMContentLoaded', () => {
     const addToCartButtons = document.querySelectorAll('.addToCartBtn');
 
@@ -121,4 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
             agregarProductoAlCarrito(productId);
         });
     });
+
+
+// btn logout
+const btnLogout = document.getElementById("btnLogout");
+
+    if (btnLogout) { 
+        btnLogout.addEventListener("click", async () => {
+            try {
+                const response = await fetch("/api/sessions/logout", {
+                    method: "GET",
+                });
+
+                if (response.status === 200) {
+                    console.log("Sesión cerrada con éxito");
+                    window.location.href = "/login";
+                } else {
+                    console.log("Error al cerrar sesión");
+                }
+            } catch (error) {
+                console.error("Error al cerrar sesión:", error);
+            }
+        });
+    }
 });

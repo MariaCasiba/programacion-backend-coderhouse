@@ -14,7 +14,7 @@ const cartService = new CartService();
 router.get("/", async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
-    res.render("home", { products } );
+    res.render("home");
 
   } catch (error) {
     console.error("Error al obtener los productos", error);
@@ -26,7 +26,9 @@ router.get("/", async (req, res) => {
 router.get("/products", async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
-    res.render("products", { products } );
+    const user = req.session.user;
+    console.log('Datos del usuario en sesión: ', user)
+    res.render("products", { products, user } );
 
   } catch (error) {
     console.error("Error al obtener los productos", error);
@@ -49,7 +51,6 @@ router.get("/carts/:cid", async (req, res) => {
   res.render("cart", { cart })
 })
 
-
 // vista de handlebars de productos en tiempo real 
 router.get("/realtimeproducts", async (req, res) => {
   try {
@@ -62,10 +63,30 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 
-
 // vista de handlebars para el chat 
 router.get("/chat", (req, res) => {
   res.render("chat");
+})
+
+//vista de handlebars para el login de usuario
+router.get("/login", async (req, res) => {
+  res.render("login");
+})
+
+//vista de handlebars para registro de usuario
+router.get("/register", async (req, res) => {
+  res.render("register");
+})
+
+//vista profile
+router.get("/profile", (req, res) => {
+  if (req.session.user) {
+    const user = req.session.user;
+    console.log("datos de usuario en /profile: ", user)
+    res.render("profile", { user })
+  } else {
+  res.redirect("/login");
+  }
 })
 
 

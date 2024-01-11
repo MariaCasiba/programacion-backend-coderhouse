@@ -1,33 +1,14 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="m-3 p-3 text-center">Productos</h1>
+            <h1 class="m-3 p-3 text-center">Bienvenido a nuestro e-commerce!</h1>
+            <p class="mt-3">Para acceder a los productos, loguéate:</p>
+            <a href="/login" class="btn btn-dark">Login</a>
+            <p class="mt-3">Si es la primera vez que visitas la web, regístrate:</p>
+            <a href="/register" class="btn btn-dark">Register</a>
         </div>
-        <div class="row">
-            <div class="col text-center m-3">
-                <button class="btn btn-dark" onclick="redirectToProducts()">Ir al e-commerce</button>
-            </div>
-        </div> 
+        
     </div>
-    <div class="row">
-        {{#each products.payload}}
-
-        <div class="col-sm-4">
-                <div class="card border-0 m-3 w-50 text-center" id="{{this._id}}">
-                    <div class="card-body">
-                        <img src="{{this.thumbnails}}" class="img-fluid" style="max-width: 180px" alt="{{this.title}}">
-                        <h5 class="card-title">{{this.title}}</h5>
-                        <p class="card-text-center">{{this.description}}</p>
-                        
-                    </div>
-                </div>   
-        </div>        
-        {{/each}}   
-
-    </div>   
+    
 </div>
-<script>
-    function redirectToProducts() {
-        window.location.href = '/products'; 
-    }
-</script>
+

@@ -1,8 +1,9 @@
 import express from "express";
 import exphbs from "express-handlebars";
-import Handlebars from "handlebars";
 import { Server } from "socket.io";
-import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 //import { ProductManager } from "./daos/file/ProductManagerFs.js";
 import { ProductService } from "./daos/mongo/productsDaoMongo.js";
 import { ChatService } from "./daos/mongo/chatDaoMongo.js";
@@ -14,14 +15,33 @@ import { connectDB } from "./config/index.js";
 const app = express();
 const PORT = 8080;
 
-// conexión a mongo
-connectDB()
+
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
+//cookies
+app.use(cookieParser('s3cr3t@'));
 
+
+// estrategia guardar session en base de datos Mongo
+app.use(session({
+  store:MongoStore.create({
+    mongoUrl: "mongodb+srv://mariacasiba:GusGus59@mariacasiba.kduocgy.mongodb.net/test?retryWrites=true&w=majority",
+    mongoOptions:{
+      useNewUrlParser:false, 
+      useUnifiedTopology:false
+    },
+    ttl:15000000000
+  }),
+  secret: 'secretCoder',
+  resave: true,
+  saveUninitialized: true
+})); 
+
+// conexión a mongo
+connectDB()
 
 // motor de plantilla handlebars
 

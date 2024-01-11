@@ -71,22 +71,18 @@ export class CartService {
                 console.log("No se encontró el carrito!");
                 return false;
             }
-            if (!product) {
-                console.log("No se encontró el producto.")
-                return false;
-            }
 
-            const existingProduct = cart.products.find(item => item.product.toString() === pid);
+            const existingProduct = cart.products.find(item => item.product.equals(product._id));
 
             if (existingProduct) {
                 existingProduct.quantity += 1;
 
             } else {
-                cart.products.push({ product: pid, quantity: 1});
-
+                cart.products.push({ product: product._id, quantity: 1 });
             }
 
-            await cartModel.updateOne({_id: cid}, {products: cart.products});
+            
+            await cart.save();
             console.log("Producto agregado al carrito correctamente.")
             return true;
 
@@ -241,6 +237,4 @@ async updateProductQuantity(cid, pid, quantity) {
         return false;
     }
 }
-
-
 }

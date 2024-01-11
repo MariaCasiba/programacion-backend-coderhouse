@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <h1 class="m-3 p-3 text-center">Log in</h1>
+            <form action="/api/sessions/login" method="post" class="form-group">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Usuario</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>    
+                <button type="button" class="btn btn-dark" id="btnLogIn">Log in</button>
+            </form>
+            <p class="mt-5">Si aún no eres Usuario, regístrate:</p>
+            <a href="/register" class="btn btn-dark">Register</a>
+        </div>
+    </div>                    
+</div>
+    
+<script src="js/login.js"></script>
