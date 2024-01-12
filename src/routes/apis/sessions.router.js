@@ -7,23 +7,6 @@ const router = express.Router();
 const userService = new UserService();
 
 
-/*
-// login del usuario
-router.post('/login', authenticateUser, (req, res) => {
-    const { userRole } = req;
-
-    if (userRole === 'admin') {
-        
-        res.send({ status: "OK", message: "Inicio de sesión exitoso como administrador!" });
-    } else if (userRole === 'user') {
-        
-        res.send({ status: "OK", message: "Inicio de sesión exitoso como usuario!" });
-    } else {
-        
-        res.status(500).send({ status: "Error", message: "Error al determinar el rol del usuario" });
-    }
-}); */
-
 // login del usuario
 router.post('/login', determineUserRole, async (req, res) => {
     const { email, password } = req.body;
