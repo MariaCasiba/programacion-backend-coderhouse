@@ -7,15 +7,18 @@ import MongoStore from "connect-mongo";
 //import { ProductManager } from "./daos/file/ProductManagerFs.js";
 import { ProductService } from "./daos/mongo/productsDaoMongo.js";
 import { ChatService } from "./daos/mongo/chatDaoMongo.js";
-import __dirname from "./utils.js";
+import __dirname from "./utils/index.js";
+//import __dirname from "./utils.js";
 import indexRouter from "./routes/index.js";
 import { connectDB } from "./config/index.js";
+// passport
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
+
 
 
 const app = express();
 const PORT = 8080;
-
-
 
 
 app.use(express.json());
@@ -25,13 +28,15 @@ app.use(express.static(__dirname + "/public"));
 app.use(cookieParser('s3cr3t@'));
 
 
+
+
 // estrategia guardar session en base de datos Mongo
 app.use(session({
   store:MongoStore.create({
     mongoUrl: "mongodb+srv://mariacasiba:GusGus59@mariacasiba.kduocgy.mongodb.net/test?retryWrites=true&w=majority",
     mongoOptions:{
-      useNewUrlParser:false, 
-      useUnifiedTopology:false
+      useNewUrlParser:true, 
+      useUnifiedTopology:true
     },
     ttl:15000000000
   }),
@@ -40,8 +45,20 @@ app.use(session({
   saveUninitialized: true
 })); 
 
-// conexión a mongo
-connectDB()
+// middleware de passport
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
+// passport github
+app.use(session({
+  secret:"secretCoder",
+  resave: false, 
+  saveUninitialized: false,
+}))
+
+// localhost:8080/api/products
+app.use(indexRouter);
 
 // motor de plantilla handlebars
 
@@ -57,8 +74,8 @@ app.engine('hbs', exphbs({
 app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 
-// localhost:8080/api/products
-app.use(indexRouter);
+// conexión a mongo
+connectDB()
 
 // middleware de errores
 app.use((err, req, res, next) => {

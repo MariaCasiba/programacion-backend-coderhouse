@@ -1,34 +1,44 @@
+
+
 const loginUser = async () => {
-    const password = document.getElementById("password").value;
-    const email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    let email = document.getElementById("email").value;
 
     if (!email || !password) {
-        alert("Complete los campos de usuario y contraseña.")
+        alert("Complete los campos de usuario y contraseña.");
         return;
     }
 
-    const user = {email, password};
+    const user = { email, password }; 
 
-    try{
+
+    try {
         const response = await fetch("/api/sessions/login", {
             method: "POST",
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-            body: JSON.stringify(user),
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+            },
+            body: JSON.stringify(user)
         });
 
-        const data = await response.json();
-
         if (response.ok) {
-            location.href = "/products";
-        } else {
-            alert("Falló el login: " + data.message);
-        }
-    } catch (error) {
-        console.error('Error al procesar la solicitud', error)
-    }
-    
+            const data = await response.json();
 
-};
+            if (data.status === "success") {
+                location.href = "/products";
+            } else {
+                alert(`Falló el inicio de sesión:  ${data.error}`);
+            }
+    } else {
+        const errorMessage = await response.text();
+        alert(`Error en la solicitud: ${errorMessage}`);
+    }
+    }catch (error) {
+        console.log("Error al procesr la solicitud", error);
+        alert('Error en la solicitud: ' + error.message)
+    }
+} ;
+
 
 
 

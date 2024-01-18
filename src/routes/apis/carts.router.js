@@ -6,7 +6,6 @@ const cartsRouter = Router();
 const cartsService = new CartService();
 
 
-
 // endpoint para crear o obtener un carrito
 cartsRouter.post("/", async (req, res) => {
   try {

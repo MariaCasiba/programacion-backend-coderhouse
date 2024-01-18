@@ -14,7 +14,7 @@ const cartService = new CartService();
 router.get("/", async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
-    res.render("home");
+    res.render("home", {products});
 
   } catch (error) {
     console.error("Error al obtener los productos", error);
@@ -26,7 +26,8 @@ router.get("/", async (req, res) => {
 router.get("/products", async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
-    const user = req.session.user;
+    //const user = req.session.user;
+    const user = req.session && req.session.user;
     console.log('Datos del usuario en sesión: ', user)
     res.render("products", { products, user } );
 

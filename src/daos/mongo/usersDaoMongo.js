@@ -1,3 +1,4 @@
+import { createHash } from "../../utils/hashPassword.js";
 import { userModel } from "./models/user.model.js";
 
 export class UserService {
@@ -15,9 +16,9 @@ export class UserService {
                 return false;
             }
 
-            await userModel.create(user);
+            const  newUser = await userModel.create(user);
             console.log("Usuario agregado correctamente!");
-            return true;
+            return newUser;
 
         } catch (error) {
             console.log("Error al agregar el usuario!", error);
@@ -82,7 +83,9 @@ export class UserService {
     }
 
     // login 
-    async login(email, password) {
+
+    
+    async login(user) {
         try {
             let user = null;
 
@@ -95,8 +98,8 @@ export class UserService {
             } else {
                 user = await this.userModel.findOne({ email });
 
-                if (!user || user.password !== password) {
-                    console.log("Usuario no encontrado o contraseña incorrecta");
+                if (!user ) {
+                    console.log("Email o contraseña incorrecta");
                     return null;
                 }
             }
@@ -109,5 +112,7 @@ export class UserService {
             return null;
         }
     }
+
+
 }
 
