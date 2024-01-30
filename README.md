@@ -1,6 +1,7 @@
 # Proyecto de E-commerce del Curso de Backend
 
 Este es proyecto de ecommerce del curso de Programación Backend de Coderhouse.
+Alumna: María Inés Casiba
 Profesor: Federico Osandon
 Comisión: 55625 - Año 2023/24
 Tutor: Alan Sinicco
