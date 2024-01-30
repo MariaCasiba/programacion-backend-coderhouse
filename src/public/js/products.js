@@ -15,7 +15,7 @@ const crearCarrito = async () => {
             localStorage.setItem("cart", JSON.stringify({ _id: cartId }));
             return { _id: cartId };
         } else if (data && data.status === "success" && data.payload_id) {
-            const cartId = data.payload_id.toString(); // Manejar la respuesta anterior (sin '_id')
+            const cartId = data.payload_id.toString(); 
             console.log("Carrito creado con id:", cartId);
             localStorage.setItem("cart", JSON.stringify({ _id: cartId }));
             return { _id: cartId };
@@ -28,6 +28,8 @@ const crearCarrito = async () => {
         return null;
     }
 }
+
+
 
 // obtener carrito por id
 const obtenerIdCarrito = async () => {

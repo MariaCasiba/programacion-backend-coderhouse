@@ -3,6 +3,8 @@
         <div class="col-md-4 offset-md-4">
             <h1 class="m-3 p-3 text-center">Loguéate en tu cuenta</h1>
             <h4>Con usuario y contraseña</h4>
+            <!-- agrego div para mensajes de error -->
+            <div id="loginErrorMessage" class="alert alert-danger" style="display: none;"></div>
             <form action="/api/sessions/login" method="post" class="form-group">
                 <div class="mb-3">
                     <label for="email" class="form-label">Usuario</label>

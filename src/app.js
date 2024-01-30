@@ -28,9 +28,8 @@ app.use(express.static(__dirname + "/public"));
 app.use(cookieParser('s3cr3t@'));
 
 
+// estrategia guardar session en base de datos Mongo 
 
-
-// estrategia guardar session en base de datos Mongo
 app.use(session({
   store:MongoStore.create({
     mongoUrl: "mongodb+srv://mariacasiba:GusGus59@mariacasiba.kduocgy.mongodb.net/test?retryWrites=true&w=majority",
@@ -45,10 +44,6 @@ app.use(session({
   saveUninitialized: true
 })); 
 
-// middleware de passport
-initializePassport()
-app.use(passport.initialize())
-app.use(passport.session())
 
 // passport github
 app.use(session({
@@ -57,11 +52,17 @@ app.use(session({
   saveUninitialized: false,
 }))
 
-// localhost:8080/api/products
+
+// middleware de passport
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
+
+
 app.use(indexRouter);
 
 // motor de plantilla handlebars
-
 app.engine('hbs', exphbs({
   extname: '.hbs',
   runtimeOptions: {
@@ -76,6 +77,7 @@ app.set("views", __dirname + "/views");
 
 // conexión a mongo
 connectDB()
+
 
 // middleware de errores
 app.use((err, req, res, next) => {

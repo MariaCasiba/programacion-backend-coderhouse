@@ -1,22 +1,32 @@
-import { createHash } from "../../utils/hashPassword.js";
+import { createHash, isValidPassword } from "../../utils/hashPassword.js";
 import { userModel } from "./models/user.model.js";
+import { CartService } from "./cartsDaoMongo.js";
 
 export class UserService {
 
     constructor() {
-        this.userModel = userModel
+        this.userModel = userModel;
+        this.cartService = new CartService();
     }
+
 
     // Agregar usuario
     async addUser(user) {
         try {
-            const repeatedUser = await userModel.findOne({ email: user.email });
+            const repeatedUser = await this.userModel.findOne({ email: user.email });
             if (repeatedUser) {
                 console.log("El email ya se encuentra registrado.");
                 return false;
             }
 
-            const  newUser = await userModel.create(user);
+            const cartId = await this.cartService.createCart();
+            console.log("Nuevo carrito creado en addUser: ", cartId);
+
+            user.cartId = cartId;
+
+            console.log("Usuario antes de guardarlo", user);
+            const newUser = await this.userModel.create(user);
+
             console.log("Usuario agregado correctamente!");
             return newUser;
 
@@ -25,6 +35,8 @@ export class UserService {
             return false;
         }
     }
+
+
 
     // Obtener todos los usuarios
     async getUsers() {
@@ -82,37 +94,41 @@ export class UserService {
         }
     }
 
-    // login 
 
-    
-    async login(user) {
-        try {
-            let user = null;
 
-            if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-                user = {
-                    email: "adminCoder@coder.com",
-                    role: "admin",
-                    first_name: "Admin",
-                };
-            } else {
-                user = await this.userModel.findOne({ email });
+async login(credentials) {
+    try {
+        let user = null;
 
-                if (!user ) {
-                    console.log("Email o contraseña incorrecta");
-                    return null;
-                }
+        if (credentials.email === "adminCoder@coder.com" && credentials.password === "adminCod3r123") {
+            user = {
+                email: "adminCoder@coder.com",
+                role: "admin",
+                first_name: "Admin",
+                password: createHash("adminCod3r123"),
+            };
+        } else {
+            user = await this.userModel.findOne({ email: credentials.email });
+
+            if (!user) {
+                console.log("Usuario no encontrado");
+                return { error: "No se encontró el usuario" };
             }
 
-            console.log("Usuario logueado:", user);
-            return user;
-
-        } catch (error) {
-            console.error("Error al loguear el usuario:", error);
-            return null;
+            if (!isValidPassword(credentials.password, user)) {
+                console.log("Contraseña incorrecta");
+                return { error: "Contraseña incorrecta" };
+            }
         }
-    }
 
+        console.log("Usuario logueado:", user);
+        return user;
+
+    } catch (error) {
+        console.error("Error al loguear el usuario:", error);
+        return { error: "Error interno del servidor" };
+    }
+}
 
 }
 

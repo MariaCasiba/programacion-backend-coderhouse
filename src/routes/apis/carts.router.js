@@ -69,20 +69,22 @@ cartsRouter.get("/", async (req, res) => {
 // endpoint para agregar un producto a un carrito
 cartsRouter.post("/:cid/products/:pid", async (req, res) => {
   try {
+    
 
-    const { cid, pid } = req.params;
+    const { cid, pid } = req.params;  
 
     if (await cartsService.addProductToCart(cid, pid)) {
-      res.send({status: "ok", message: "El producto se agregó correctamente o se actualizó la cantidad"})
+      return res.send({ status: "ok", message: "El producto se agregó correctamente o se actualizó la cantidad" });
     } else {
-      res.status(500).send({status: "error", message: "No se pudo agregar el producto al carrito!"})
+      return res.status(500).send({ status: "error", message: "No se pudo agregar el producto al carrito!" });
     }
     
   } catch (error) {
     console.error("Error en la ruta POST /carts/:cid/products/:pid", error);
-    res.status(500).send({ status: "error", message: "Error del servidor al agregar producto al carrito" });
+    return res.status(500).send({ status: "error", message: "Error del servidor al agregar producto al carrito" });
   }
 });
+
 
 
 // endpoint para eliminar todos los productos del carrito

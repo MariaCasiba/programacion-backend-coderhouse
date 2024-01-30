@@ -1,5 +1,4 @@
 import { Router } from "express";
-import exphbs from "express-handlebars";
 //import { ProductManager } from "../daos/file/ProductManagerFs.js";
 import { ProductService } from "../daos/mongo/productsDaoMongo.js";
 import { CartService } from "../daos/mongo/cartsDaoMongo.js";
@@ -10,15 +9,13 @@ const router = Router();
 const productService = new ProductService(); 
 const cartService = new CartService();
 
-// vista de handlebars para mostrar el home
+// vista de handlebars  home
 router.get("/", async (req, res) => {
-  try {
-    let products = await productService.getProducts(req.query);
-    res.render("home", {products});
-
-  } catch (error) {
-    console.error("Error al obtener los productos", error);
-    res.status(500).send("Error interno del server");
+    res.render("home")
+    if (req.session.user) {
+      res.redirect("/products");
+  } else {
+      res.redirect("/login");
   }
 });
 
@@ -79,7 +76,7 @@ router.get("/register", async (req, res) => {
   res.render("register");
 })
 
-//vista profile
+//vista de handlebars para profile de usuario
 router.get("/profile", (req, res) => {
   if (req.session.user) {
     const user = req.session.user;

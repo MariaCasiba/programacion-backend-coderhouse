@@ -1,11 +1,14 @@
 import passport from "passport";
-import local from 'passport-local';
+//import local from 'passport-local';
+import jwt from "passport-jwt";
 import mongoose from "mongoose";
 import GitHubStrategy from "passport-github2";
 //import { userModel } from "../daos/mongo/models/user.model.js";
 import { createHash, isValidPassword } from "../utils/hashPassword.js";
 import { UserService } from "../daos/mongo/usersDaoMongo.js";
 
+// PASSPORT LOCAL
+/*
 const LocalStrategy = local.Strategy;
 const userService = new UserService();
 
@@ -90,9 +93,40 @@ passport.use("login", new LocalStrategy({
         return done(error);
     }
 }));
+*/
+
+// PASSPORT JWT 
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+
+const userService = new UserService()
+
+const initializePassport = () => {
+
+    const cookieExtractor = req => {
+        let token = null;
+        if( req && req.cookies){
+            token = req.cookies['token'] 
+        }
+        return token
+    }
+
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: 'CoderSecretJWToken',
+    }, async (jwt_payload, done) => {
+        try {
+            return done(null, jwt_payload)
+        } catch (error) {
+            return done(error)
+        }
+    }))
+}
 
 
 
+// session con GITHUB 
 passport.use("github", new GitHubStrategy(
     {
         clientID: "Iv1.2212fbba5c30fd64",
@@ -122,6 +156,7 @@ passport.use("github", new GitHubStrategy(
         }
     }
 ));
+
 
 
 

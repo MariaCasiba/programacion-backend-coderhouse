@@ -8,19 +8,6 @@
             <a href="/register" class="btn btn-dark mb-4">Register</a>
         </div>
     </div> 
-    <div class="row justify-content-center text-center">    
-            {{#each products.payload}}
-                <div class="col col-md-3 m-3">
-                    <div class="card" id="{{this._id}}">
-                        <img src="{{this.thumbnails}}" class="card-img-top mx-auto d-block m-2" style="max-width: 180px" alt="{{this.title}}">
-                        <div class="card-body text-justify p-2 m-3">
-                            <h5 class="card-title m-2 p-3">{{this.title}}</h5>
-                            <p class="card-text">Precio: ${{this.price}}</p>
-                        </div>
-                    </div>                 
-                </div>  
-            {{/each}}       
-        </div>
     
 </div>
 

@@ -23,7 +23,6 @@ export class CartService {
     }
 
 
-
     // obtener carrito por id
     async getCartById(cid) {
         try {
@@ -65,12 +64,14 @@ export class CartService {
     async addProductToCart(cid, pid) {
         try {
             const cart = await this.getCartById(cid);
+            console.log("id del carrito en addProductToCart: ", cart);
             const product = await productModel.findById(pid);
-
+            
             if (!cart || !product) {
                 console.log("No se encontró el carrito!");
                 return false;
             }
+
 
             const existingProduct = cart.products.find(item => item.product.equals(product._id));
 
