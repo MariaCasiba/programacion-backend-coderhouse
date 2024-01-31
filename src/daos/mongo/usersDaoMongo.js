@@ -24,7 +24,7 @@ export class UserService {
 
             user.cartId = cartId;
 
-            console.log("Usuario antes de guardarlo", user);
+            
             const newUser = await this.userModel.create(user);
 
             console.log("Usuario agregado correctamente!");
