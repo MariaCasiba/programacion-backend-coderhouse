@@ -1,5 +1,4 @@
 
-
 // register.js
 
 const registerUser = async () => {

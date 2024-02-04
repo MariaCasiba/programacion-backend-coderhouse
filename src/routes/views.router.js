@@ -2,6 +2,7 @@ import { Router } from "express";
 //import { ProductManager } from "../daos/file/ProductManagerFs.js";
 import { ProductService } from "../daos/mongo/productsDaoMongo.js";
 import { CartService } from "../daos/mongo/cartsDaoMongo.js";
+import { passportCall } from "../utils/passportCall.js";
 
 
 const router = Router();
@@ -12,7 +13,7 @@ const cartService = new CartService();
 // vista de handlebars  home
 router.get("/", async (req, res) => {
     res.render("home")
-    if (req.session.user) {
+    if (req.user) {
       res.redirect("/products");
   } else {
       res.redirect("/login");
@@ -20,11 +21,10 @@ router.get("/", async (req, res) => {
 });
 
 //vista de handlebars para products
-router.get("/products", async (req, res) => {
+router.get("/products", passportCall('jwt'), async (req, res) => {
   try {
     let products = await productService.getProducts(req.query);
-    //const user = req.session.user;
-    const user = req.session && req.session.user;
+    const user = req && req.user;
     console.log('Datos del usuario en sesión: ', user)
     res.render("products", { products, user } );
 
@@ -78,8 +78,8 @@ router.get("/register", async (req, res) => {
 
 //vista de handlebars para profile de usuario
 router.get("/profile", (req, res) => {
-  if (req.session.user) {
-    const user = req.session.user;
+  if (req.user) {
+    const user = req.user;
     console.log("datos de usuario en /profile: ", user)
     res.render("profile", { user })
   } else {

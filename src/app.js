@@ -27,9 +27,8 @@ app.use(express.static(__dirname + "/public"));
 //cookies
 app.use(cookieParser('s3cr3t@'));
 
-
+/*
 // estrategia guardar session en base de datos Mongo 
-
 app.use(session({
   store:MongoStore.create({
     mongoUrl: "mongodb+srv://mariacasiba:GusGus59@mariacasiba.kduocgy.mongodb.net/test?retryWrites=true&w=majority",
@@ -51,12 +50,12 @@ app.use(session({
   resave: false, 
   saveUninitialized: false,
 }))
-
+*/
 
 // middleware de passport
 initializePassport()
 app.use(passport.initialize())
-app.use(passport.session())
+//app.use(passport.session())
 
 
 

@@ -16,9 +16,9 @@ const loginUser = async () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=UTF-8",
-                "authorization": localStorage.getItem("token")
             },
             body: JSON.stringify(user),
+            credentials: "include", 
         });
 
         if (response.ok) {
@@ -27,6 +27,11 @@ const loginUser = async () => {
 
                 if (data && data.status === "success") {
                     console.log("Inicio de sesión exitoso");
+
+                    const token = data.token || getCookie("token");
+
+                    localStorage.setItem("token", token);
+
                     location.href = "/products";
                 } else {
                     console.log("Falló el inicio de sesión", data && data.message);
@@ -59,6 +64,18 @@ function showLoginError(message) {
         document.getElementById("email").value = "";
         document.getElementById("password").value = "";
     }, 3000);
+}
+
+// Función para obtener el valor de una cookie por su nombre
+function getCookie(name) {
+    const cookies = document.cookie.split(";").map(cookie => cookie.trim());
+    for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split("=");
+        if (cookieName === name) {
+            return cookieValue;
+        }
+    }
+    return null;
 }
 
 document.getElementById("btnLogIn").onclick = loginUser;
