@@ -30,7 +30,7 @@ const crearCarrito = async () => {
 }
 
 
-/*
+
 // obtener carrito por id
 const obtenerIdCarrito = async () => {
     try {
@@ -49,42 +49,7 @@ const obtenerIdCarrito = async () => {
             }
         }
 
-        const  newCart = await crearCarrito();
-
-        if (newCart && newCart._id) {
-            console.log("Id del nuevo carrito:", newCart._id);
-            return newCart._id.toString(); 
-        } else {
-            console.log("No se pudo obtener el id del carrito");
-            return null;
-        } 
         
-    } catch (error) {
-        console.log("Error en obtener el Id del Carrito! " + error);
-        return null;
-    }
-}
-*/
-
-// obtener carrito por id
-const obtenerIdCarrito = async () => {
-    try {
-        if (!localStorage) {
-            console.log("localStorage no está disponible en este navegador.");
-            return null;
-        }
-
-        const existingCart = localStorage.getItem("cart");
-
-        if (existingCart) {
-            const cart = JSON.parse(existingCart);
-            if (cart._id) {
-                console.log("Id del carrito existente: ", cart._id);
-                return cart._id.toString();
-            }
-        }
-
-        // Verificar si el usuario tiene un carrito asociado
         const response = await fetch("/api/users/current", {
             method: "GET",
             headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -99,7 +64,7 @@ const obtenerIdCarrito = async () => {
             return existingCartId;
         }
 
-        // Si no hay carrito asociado, crear uno nuevo
+        
         const newCart = await crearCarrito();
 
         if (newCart && newCart._id) {
@@ -119,41 +84,11 @@ const obtenerIdCarrito = async () => {
 
 
 
-/*
-// agregar producto al carrito
-const agregarProductoAlCarrito = async (pid) => {
-    try {
-        let cid = await obtenerIdCarrito();
-
-        if (!cid) {
-            console.log("No se pudo obtener el id del carrito");
-            return;
-        }
-        
-        const response = await fetch(`/api/carts/${cid}/products/${pid}`, {
-            method: "POST",
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-            body: JSON.stringify({})
-        })
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Se agregó al carrito!", data);
-
-        } else {
-            console.log("Error al agregar el producto al carrito", response.status);
-        }
-            
-    } catch (error) {
-        console.log("Error en agregar el producto al Carrito! " + error);
-    }
-}
-*/
 
 // agregar producto al carrito
 const agregarProductoAlCarrito = async (pid) => {
     try {
-        // Obtener la información del usuario actual
+       
         const responseUser = await fetch("/api/sessions/current", {
             method: "GET",
             headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -166,8 +101,9 @@ const agregarProductoAlCarrito = async (pid) => {
             return;
         }
 
-        // Utilizar el cartId del usuario actual
+       
         const cid = userData.reqUser.cartId;
+        console.log("userData.reqUser.cartId: ", userData.reqUser.cartId)
 
         if (!cid) {
             console.log("No se pudo obtener el id del carrito");

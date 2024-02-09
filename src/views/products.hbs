@@ -13,15 +13,15 @@
 
             <div class="col col-md-3">
                 <button type="button" class="btn btn-outline-dark" id="btnLogout">Log Out</button>
-                <a href="/profile" class="btn btn-dark ml-2">Ir a Mi Perfil</a>
+                <a href="/profile" class="btn btn-outline-dark ml-2">Ir a Mi Perfil</a>
             </div>
         </div>
 
         <div class="row mt-3">
-            <!--
-            <div class="col text-center">
-                <a href="/carts/:cid" class="btn btn-primary">Ir al Carrito</a>
-            </div> -->
+            <div class="col-md-9"></div> 
+            <div class="col-md-3 text-right"> 
+                <a href="/carts/{{user.cartId}}" class="btn btn-dark">Ir al Carrito</a>
+            </div>
         </div>
 
         <div class="row justify-content-center text-center">    

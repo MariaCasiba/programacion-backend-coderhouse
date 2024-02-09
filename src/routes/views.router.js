@@ -77,7 +77,7 @@ router.get("/register", async (req, res) => {
 })
 
 //vista de handlebars para profile de usuario
-router.get("/profile", (req, res) => {
+router.get("/profile", passportCall('jwt'), (req, res) => {
   if (req.user) {
     const user = req.user;
     console.log("datos de usuario en /profile: ", user)
