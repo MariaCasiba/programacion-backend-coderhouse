@@ -1,106 +1,17 @@
 import passport from "passport";
-//import local from 'passport-local';
 import jwt from "passport-jwt";
-import mongoose from "mongoose";
 import GitHubStrategy from "passport-github2";
-//import { userModel } from "../daos/mongo/models/user.model.js";
-import { createHash, isValidPassword } from "../utils/hashPassword.js";
 import { UserService } from "../daos/mongo/usersDaoMongo.js";
-
-// PASSPORT LOCAL
-/*
-const LocalStrategy = local.Strategy;
-const userService = new UserService();
+import { configObject } from "./index.js";
 
 
-const initializePassport = () => {
-
-    // register
-    passport.use('register', new LocalStrategy({
-        passReqToCallback: true,
-        usernameField: 'email'
-    }, async (req, username, password, done) => {
-        try {
-            const {first_name, last_name, email, age} = req.body;
-        
-            let userFound = await userService.getUserByMail(username)
-
-            if (userFound) {
-                console.log("El usuario " + email + " ya se encuentra registrado.");
-                return done(null, false, { message: 'El email ya se encuentra registrado'});
-            }
-            let newUser = {
-                first_name,
-                last_name,
-                email: username,
-                age,
-                password: createHash(password)
-            }
-
-            let result = await userService.addUser(newUser)
-
-            if (result) {
-                console.log("Usuario registrado con exito: ", result);
-                return done(null, result);
-            }
-
-        } catch (error) {
-            return done('Error al crear un usuario' + error)
-        }
-    }))
-}
-
-
-// login
-passport.use("login", new LocalStrategy({ 
-    usernameField: "email" 
-}, async (username, password, done) => {
-    try {
-        let user;
-
-        if (username === "adminCoder@coder.com" && password === "adminCod3r123") {
-
-        const adminUserId = new mongoose.Types.ObjectId();
-        
-        user = {
-            _id: adminUserId,
-            first_name: "Admin",
-            email: "adminCoder@coder.com", 
-            role: "admin"
-        };
-
-        return done(null, user);
-
-    } else {
-        user = await userService.getUserByMail(username);
-
-        if (!user) {
-            console.log("Error! El usuario no existe!");
-            return done(null, false);
-        }
-
-        if (!isValidPassword(password, {password: user.password})) {
-            console.log("Contraseña incorrecta");
-            return done(null, false);
-        }
-
-        console.log("Inicio de sesión exitoso. Usuario:", user.email);
-        return done(null, user);
-        }
-
-    } catch (error) {
-        console.log("Error en autenticación", error);
-        return done(error);
-    }
-}));
-*/
 
 // PASSPORT JWT 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
 
 
-const userService = new UserService()
+
 
 const initializePassport = () => {
 
@@ -114,7 +25,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: 'CoderSecretJWToken',
+        secretOrKey: configObject.jwt_private_key,
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)
@@ -125,7 +36,7 @@ const initializePassport = () => {
 }
 
 
-
+/*
 // session con GITHUB 
 passport.use("github", new GitHubStrategy(
     {
@@ -156,10 +67,7 @@ passport.use("github", new GitHubStrategy(
         }
     }
 ));
-
-
-
-
+*/
 
 //serialize y deserialize (guardar y recuperar credenciales del usuario de session)
 

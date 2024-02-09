@@ -1,6 +1,7 @@
 import { createHash, isValidPassword } from "../../utils/hashPassword.js";
 import { userModel } from "./models/user.model.js";
 import { CartService } from "./cartsDaoMongo.js";
+import { configObject } from "../../config/index.js";
 
 export class UserService {
 
@@ -100,12 +101,12 @@ async login(credentials) {
     try {
         let user = null;
 
-        if (credentials.email === "adminCoder@coder.com" && credentials.password === "adminCod3r123") {
+        if (credentials.email === configObject.admin_email && credentials.password === configObject.admin_password) {
             user = {
-                email: "adminCoder@coder.com",
+                email: configObject.admin_email,
                 role: "admin",
                 first_name: "Admin",
-                password: createHash("adminCod3r123"),
+                password: createHash(configObject.admin_password),
             };
         } else {
             user = await this.userModel.findOne({ email: credentials.email });

@@ -17,8 +17,12 @@ Tutor: Alan Sinicco
 Para iniciar la aplicación en modo de desarrollo, ejecuta el siguiente comando:
 
 ```bash
-npm run start:dev
+npm run dev
 
+Para iniciar la aplicación en modo de production, ejecuta el siguiente comando:
+
+```bash
+npm start
 
 
 Rutas Accesibles
@@ -27,7 +31,7 @@ Rutas Públicas
 GET /: Página principal. Redirige a /products si el usuario está autenticado o a /login si no.
 GET /login: Página de inicio de sesión.
 GET /register: Página de registro de usuario.
-GET /products: Página de productos.
+
 
 Rutas Protegidas (Requieren Autenticación)
 GET /products: Página de productos (requiere autenticación).

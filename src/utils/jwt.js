@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
+import { configObject } from "../config/index.js";
 
-const JWT_PRIVATE_KEY = "CoderSecretJWToken";
+
 
 // generar token
-const createToken = user => jwt.sign(user, JWT_PRIVATE_KEY, {expiresIn: '24h'})
+const createToken = user => jwt.sign(user, configObject.jwt_private_key, {expiresIn: '24h'})
 
 // verificar token
 const authenticationToken = (req, res, next) => {
@@ -12,7 +13,7 @@ const authenticationToken = (req, res, next) => {
     if(!authHeader) res.status(401).json({status: 'error', error: 'not authenticated'})
 
     const token = authHeader.split(' ')[1]   
-    jwt.verify(token, JWT_PRIVATE_KEY, (err, userDecode)=>{
+    jwt.verify(token, configObject.jwt_private_key, (err, userDecode)=>{
         if(err) return res.status(401).json({status: 'error', error: 'not authorized'})
         console.log('userDecode: ', userDecode)
         req.user = userDecode;
@@ -21,4 +22,4 @@ const authenticationToken = (req, res, next) => {
 }
 
 
-export { createToken, authenticationToken, JWT_PRIVATE_KEY };
+export { createToken, authenticationToken };

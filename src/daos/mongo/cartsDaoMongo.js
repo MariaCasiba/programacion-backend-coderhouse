@@ -117,7 +117,7 @@ export class CartService {
 
 
 // eliminar carrito por id
-/*
+
 async deleteCartById(cartId) {
     try {
     const deletedCart = await cartModel.findByIdAndDelete(cartId);
@@ -133,7 +133,7 @@ async deleteCartById(cartId) {
     return false;
     }
 };
-*/
+
 
 // eliminar un producto del carrito por id de carrito y id de producto
 async deleteProductInCart(cartId, productId) {

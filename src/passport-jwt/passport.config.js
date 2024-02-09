@@ -1,13 +1,13 @@
 import passport from "passport";
 //import GitHubStrategy from "passport-github2";
 import  passport_jwt  from "passport-jwt";
+import { configObject } from "../config";
 
 
 // PASSPORT JWT 
 const JWTStrategy = passport_jwt.Strategy;
 const ExtractJWT = passport_jwt.ExtractJwt;
 
-const JWT_PRIVATE_KEY = 'CoderSecretJWToken'; 
 
 
 const initializePassport = () => {
@@ -22,7 +22,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: JWT_PRIVATE_KEY
+        secretOrKey: configObject.jwt_private_key
     }, async ( jwt_payload, done )=>{
         try {
             console.log("jwt_payload de passport config: ", jwt_payload)
