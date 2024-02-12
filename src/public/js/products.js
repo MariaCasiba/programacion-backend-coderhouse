@@ -101,7 +101,7 @@ const agregarProductoAlCarrito = async (pid) => {
             return;
         }
 
-       
+    
         const cid = userData.reqUser.cartId;
         console.log("userData.reqUser.cartId: ", userData.reqUser.cartId)
 

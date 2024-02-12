@@ -1,4 +1,5 @@
 import { UserService } from "../daos/mongo/usersDaoMongo.js";
+import { authorizationJwt } from "../passport-jwt/jwtPassport.middleware.js";
 import { createToken } from "../utils/jwt.js";
 
 class UserController {

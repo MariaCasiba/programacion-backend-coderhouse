@@ -22,35 +22,11 @@ app.use(express.static(__dirname + "/public"));
 //cookies
 app.use(cookieParser());
 
-/*
-// estrategia guardar session en base de datos Mongo 
-app.use(session({
-  store:MongoStore.create({
-    mongoUrl: "mongodb+srv://mariacasiba:GusGus59@mariacasiba.kduocgy.mongodb.net/test?retryWrites=true&w=majority",
-    mongoOptions:{
-      useNewUrlParser:true, 
-      useUnifiedTopology:true
-    },
-    ttl:15000000000
-  }),
-  secret: 'secretCoder',
-  resave: true,
-  saveUninitialized: true
-})); 
 
-
-// passport github
-app.use(session({
-  secret:"secretCoder",
-  resave: false, 
-  saveUninitialized: false,
-}))
-*/
 
 // middleware de passport
 initializePassport();
 app.use(passport.initialize());
-//app.use(passport.session())
 
 app.use(indexRouter);
 
@@ -151,41 +127,5 @@ socketServer.on("connection", async (socket) => {
     socketServer.emit("messages", updatedMessages);
   });
 
-  /*
-  // Escucha al agregar producto en RealTimeProducts con fs
-  socket.on("addProduct", async ({ product }) => {
-    const productManager = new ProductManager();
 
-    const newProduct = {
-      title: product.title,
-      description: product.description,
-      code: product.code,
-      price: product.price,
-      stock: product.stock,
-      category: product.category,
-    };
-
-    const nextProductId = await productManager.getId();
-    newProduct.id = nextProductId;
-
-    const productAdded = await productManager.addProduct(newProduct);
-
-    if (productAdded) {
-      socketServer.emit("productAdded", newProduct);
-    }
-  });
-
-  // escucha al eliminar producto en RealTimeProducts con fs 
-  socket.on("deleteProduct", async (productId) => {
-    console.log("producto a eliminar en el servidor:", productId);
-    const productManager = new ProductManager();
-    const productDeleted = await productManager.deleteProduct(
-      parseInt(productId)
-    );
-
-    if (productDeleted) {
-      console.log("producto eliminado:", productId);
-      socketServer.emit("productDeleted", productId);
-    }
-  });*/
 });

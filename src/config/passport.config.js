@@ -1,6 +1,5 @@
 import passport from "passport";
 import jwt from "passport-jwt";
-import GitHubStrategy from "passport-github2";
 import { UserService } from "../daos/mongo/usersDaoMongo.js";
 import { configObject } from "./index.js";
 
@@ -10,7 +9,7 @@ import { configObject } from "./index.js";
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
 
-
+const userService = new UserService()
 
 
 const initializePassport = () => {
@@ -35,39 +34,6 @@ const initializePassport = () => {
     }))
 }
 
-
-/*
-// session con GITHUB 
-passport.use("github", new GitHubStrategy(
-    {
-        clientID: "Iv1.2212fbba5c30fd64",
-        clientSecret: "6c246af91da1c90fdf8607b858430df89bf39a40",
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback"
-    },
-    async (accessToken, refreshToken, profile, done) => {
-        try {
-            console.log(profile);
-            const userEmail = profile._json.email;
-            let user = await userService.getUserByMail(userEmail);
-
-            if (!user) {
-                const userNew = {
-                    first_name: profile.username,
-                    email: userEmail,
-                    password: "123456"
-                }
-
-                const result = await userService.addUser(userNew);
-                return done(null, result);
-            }
-
-            return done(null, user);
-        } catch (error) {
-            return done(error);
-        }
-    }
-));
-*/
 
 //serialize y deserialize (guardar y recuperar credenciales del usuario de session)
 
