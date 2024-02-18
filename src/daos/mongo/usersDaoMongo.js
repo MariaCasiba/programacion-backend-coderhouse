@@ -36,6 +36,7 @@ export class UserService {
     // obtener usuario por email
     getUserByMail = async (uemail) => {
         return await this.userModel.findOne({ email: uemail });
+    
     }
 
     // actualizar usuario
@@ -48,7 +49,9 @@ export class UserService {
         return await this.userModel.findOneAndDelete({ _id: uid });
     }
 
+    
     // login usuario
+    /*
     login = async (credentials) => {
         try {
             
@@ -64,7 +67,8 @@ export class UserService {
             console.error("Error en la autenticación:", error);
             return null;
         }
-    }
+    } 
+*/
 }
 
 export default UserService;

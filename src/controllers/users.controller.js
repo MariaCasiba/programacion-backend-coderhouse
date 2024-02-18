@@ -1,7 +1,7 @@
 import { UserService } from "../daos/mongo/usersDaoMongo.js";
-import { authorizationJwt } from "../passport-jwt/jwtPassport.middleware.js";
 import { createToken } from "../utils/jwt.js";
 import { configObject } from "../config/index.js";
+import { createHash, isValidPassword } from "../utils/hashPassword.js"
 
 
 class UserController {
@@ -10,65 +10,74 @@ class UserController {
     }
     
     // login del usuario
+
     loginUser = async (req, res) => {
         const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).send({
-            status: "Error",
-            message: "Complete los campos de usuario y contraseña",
-        });
-    }
-
-    try {
-        let user = null; 
-
-        if (email === configObject.admin_email && password === configObject.admin_password) {
-            user = {
-                email: configObject.admin_email,
-                role: "admin",
-                first_name: "Admin"
-            }
-        } else {
-            user = await this.userService.login({ email, password });
-        }
-
-        if (!user) {
-            return res.status(401).send({
+    
+        if (!email || !password) {
+            return res.status(400).send({
                 status: "Error",
-                message: "Email o contraseña incorrectos",
+                message: "Complete los campos de usuario y contraseña",
             });
         }
-
-
-        const token = createToken({
-            first_name: user.first_name, 
-            last_name: user.last_name, 
-            id:user._id, 
-            email:user.email,
-            age: user.age,
-            role:user.role, 
-            cartId: user.cartId
-        });
-
-        res.cookie('token', token, {
-            maxAge: 60 * 60 * 1000 * 24, 
-            httpOnly: true,
-        }).send({
-        status: "success",
-        message: 'user loggued in',
-        token: token,
-        });
-
-    } catch (error) {
-        console.error("Error en el inicio de sesión", error);
-
-        res.status(500).send({
-            status: "Error",
-            message: "Error interno del servidor",
-        });
+    
+        try {
+            let user = null; 
+    
+            if (email === configObject.admin_email && password === configObject.admin_password) {
+                user = {
+                    email: configObject.admin_email,
+                    role: "admin",
+                    first_name: "Admin"
+                }
+            } else {
+                user = await this.userService.getUserByMail(email);
+                console.log("User: ", user)
+    
+                if (!user) {
+                    return res.status(401).send({
+                        status: "Error",
+                        message: "Email o contraseña incorrectos",
+                    });
+                }
+    
+                if (!isValidPassword(password, user)) {
+                    return res.status(401).send({
+                        status: "Error",
+                        message: "Email o contraseña incorrectos",
+                    });
+                }
+            }
+    
+            const token = createToken({
+                first_name: user.first_name, 
+                last_name: user.last_name, 
+                id: user._id, 
+                email: user.email,
+                age: user.age,
+                role: user.role, 
+                cartId: user.cartId
+            });
+    
+            res.cookie('token', token, {
+                maxAge: 60 * 60 * 1000 * 24, 
+                httpOnly: true,
+            }).send({
+                status: "success",
+                message: 'Inicio de sesión exitoso',
+                token: token,
+            });
+    
+        } catch (error) {
+            console.error("Error en el inicio de sesión", error);
+    
+            res.status(500).send({
+                status: "Error",
+                message: "Error interno del servidor",
+            });
+        }
     }
-    }
+    
 
     // registro de usuario
     registerUser = async (req, res) => {
@@ -97,7 +106,7 @@ class UserController {
                 last_name,
                 email,
                 age,
-                password,
+                password: createHash(password),
             };
 
             
