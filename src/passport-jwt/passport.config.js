@@ -1,5 +1,4 @@
 import passport from "passport";
-//import GitHubStrategy from "passport-github2";
 import  passport_jwt  from "passport-jwt";
 import { configObject } from "../config";
 

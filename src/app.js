@@ -2,7 +2,7 @@ import express from "express";
 import exphbs from "express-handlebars";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
-import MongoStore from "connect-mongo";
+import cors from "cors";
 //import { ProductManager } from "./daos/file/ProductManagerFs.js";
 import { ProductService } from "./daos/mongo/productsDaoMongo.js";
 import { ChatService } from "./daos/mongo/chatDaoMongo.js";
@@ -12,7 +12,6 @@ import { configObject, connectDB } from "./config/index.js";
 // passport
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-
 const app = express();
 const PORT = configObject.PORT;
 
@@ -21,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 //cookies
 app.use(cookieParser());
+app.use(cors())
 
 
 
@@ -47,6 +47,7 @@ app.set("views", __dirname + "/views");
 
 // conexión a mongo
 connectDB();
+
 
 // middleware de errores
 app.use((err, req, res, next) => {

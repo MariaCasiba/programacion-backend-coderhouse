@@ -25,7 +25,7 @@
         </div>
 
         <div class="row justify-content-center text-center">    
-            {{#each products.payload}}
+            {{#each products.docs}}
                 <div class="col col-md-3 m-3">
                     <div class="card" id="{{this._id}}">
                         <img src="{{this.thumbnails}}" class="card-img-top mx-auto d-block m-2" style="max-width: 180px" alt="{{this.title}}">
@@ -46,12 +46,12 @@
                     <ul class="pagination justify-content-center">
                         {{#if products.hasPrevPage}}
                             <li class="page-item">
-                                <a class="page-link" href="{{products.prevLink}}"><<</a>
+                                <a class="page-link" href="/products?page={{products.prevPage}}"><<</a>
                             </li>
                         {{/if}}
                         {{#if products.hasPrevPage}}
                             <li class="page-item">
-                                <a class="page-link" href="{{products.prevLink}}">{{products.prevPage}}</a>
+                                <a class="page-link" href="/products?page={{products.prevPage}}">{{products.prevPage}}</a>
                             </li>
                         {{/if}}
                         <li class="page-item">
@@ -59,12 +59,12 @@
                         </li>
                         {{#if products.hasNextPage}}
                             <li class="page-item">
-                                <a class="page-link" href="{{products.nextLink}}">{{products.nextPage}}</a>
+                                <a class="page-link" href="/products?page={{products.nextPage}}">{{products.nextPage}}</a>
                             </li>
                         {{/if}}
                         {{#if products.hasNextPage}}
                             <li class="page-item">
-                                <a class="page-link" href="{{products.nextLink}}">>></a>
+                                <a class="page-link" href="/products?page={{products.nextPage}}">>></a>
                             </li>
                         {{/if}}
                     </ul>

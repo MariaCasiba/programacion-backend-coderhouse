@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { program } from "../utils/commander.js";
+import MongoSingleton from "../utils/mongoSingleton.js";
 
 const { mode } = program.opts();
 console.log('mode config: ', mode)
@@ -18,12 +18,11 @@ const configObject = {
   admin_password: process.env.ADMIN_PASSWORD,
 };
 
-const MONGO = process.env.MONGO_URL;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(MONGO, {});
-    console.log("Base de datos MongoDB conectada");
+    //await mongoose.connect(MONGO, {});
+    MongoSingleton.getInstance(configObject.mongo_url)
   } catch (error) {
     console.error("Error al conectar a MongoDB", error);
     throw error;

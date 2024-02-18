@@ -6,7 +6,8 @@ export class ChatService {
         this.socket = socket;
     }
 
-    async getMessages() {
+    // obtener mensajes
+    getMessages = async () => {
         try {
             return await messageModel.find();
         } 
@@ -16,11 +17,11 @@ export class ChatService {
         }
     }
 
-
-    async createMessage(message) {
+    // crear mensajes
+    createMessage = async (message) => {
         try {
             const newMessage = await messageModel.create(message);
-            this.socket.emit("newMessage", newMessage); // Emite el nuevo mensaje a todos los clientes
+            this.socket.emit("newMessage", newMessage); 
             return newMessage;
         } catch (error) {
             console.error("Error al crear mensaje", error);
@@ -28,3 +29,4 @@ export class ChatService {
         }
     }
 }
+

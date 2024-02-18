@@ -23,7 +23,6 @@ router.get("/logout", userController.logoutUser);
 // current user
 router.get("/current", [passportCall('jwt'), authorizationJwt(['ADMIN'])], userController.currentUser);
 
-
-
+//router.get("/profile", passportCall('jwt'), userController.currentUser);
 
 export default router;
