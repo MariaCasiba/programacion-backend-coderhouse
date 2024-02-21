@@ -1,16 +1,14 @@
-import { UserService } from "../daos/mongo/usersDaoMongo.js";
 import { createToken } from "../utils/jwt.js";
 import { configObject } from "../config/index.js";
-import { createHash, isValidPassword } from "../utils/hashPassword.js"
-
+import { createHash } from "../utils/hashPassword.js";
+import { userService } from "../repositories/service.js";
 
 class UserController {
     constructor() {
-        this.userService = new UserService()
+        this.userService = userService;
     }
     
     // login del usuario
-
     loginUser = async (req, res) => {
         const { email, password } = req.body;
     
@@ -31,8 +29,9 @@ class UserController {
                     first_name: "Admin"
                 }
             } else {
-                user = await this.userService.getUserByMail(email);
-                console.log("User: ", user)
+
+                user = await this.userService.loginUser(email, password)
+                console.log("User en login del controller: ", user)
     
                 if (!user) {
                     return res.status(401).send({
@@ -40,13 +39,7 @@ class UserController {
                         message: "Email o contraseña incorrectos",
                     });
                 }
-    
-                if (!isValidPassword(password, user)) {
-                    return res.status(401).send({
-                        status: "Error",
-                        message: "Email o contraseña incorrectos",
-                    });
-                }
+
             }
     
             const token = createToken({
@@ -92,6 +85,7 @@ class UserController {
 
         const userFound = await this.userService.getUserByMail(email);
 
+        
         if (userFound) {
             return res.send({
                 status: "Error",
@@ -100,7 +94,7 @@ class UserController {
         }
 
         try {
-            // Crear un nuevo usuario con el servicio
+            
             const newUser = {
                 first_name,
                 last_name,
@@ -108,10 +102,11 @@ class UserController {
                 age,
                 password: createHash(password),
             };
-
             
-            const userRegistered = await this.userService.addUser(newUser);
+            const userRegistered = await this.userService.registerUser(newUser);
 
+            console.log("userRegistered en el controller: " , userRegistered)
+            
             if (userRegistered) {
             
                 const token = createToken({
@@ -148,13 +143,34 @@ class UserController {
 
     // logout usuario
     logoutUser = async (req, res) => {
-        res.clearCookie('token');
-        res.redirect("/login");
+        try {
+            res.clearCookie('token');
+            res.redirect("/login");
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            res.status(500).send({
+                status: "Error",
+                message: "Error interno del servidor al cerrar sesión",
+            });
+        }
     }
 
-    // current user
-    currentUser = async (req, res) => {
-        res.send({message:"Datos sensibles", reqUser: req.user});
+
+    // current user 
+    getCurrentUser = async (req, res) => {
+        try {
+            const userDto = await this.userService.getCurrentUser(req);
+            console.log("userDto: ", userDto)
+            console.log("userDto.cartId: ", userDto.cartId)
+            res.send({ user: userDto}) 
+
+        } catch (error) {
+            console.error("Error al obtener el usuario actual: ", error);
+            res.status(500).send({
+                status: "Error",
+                message: "Error interno del servidor al obtener el usuario actual"
+            })
+        }
     }
 
 

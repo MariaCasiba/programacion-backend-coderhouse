@@ -1,8 +1,9 @@
-import { ChatService } from "../daos/mongo/chatDaoMongo.js";
+import { chatService } from "../repositories/service.js";
+
 
 class ChatController {
     constructor(socket) {
-        this.chatService = new ChatService(socket);
+        this.chatService = chatService;
     }
 
     // obtener mensajes

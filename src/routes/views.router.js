@@ -1,8 +1,9 @@
 import { Router } from "express";
-//import { ProductManager } from "../daos/file/ProductManagerFs.js";
 import { ProductService } from "../daos/mongo/productsDaoMongo.js";
 import { CartService } from "../daos/mongo/cartsDaoMongo.js";
 import { passportCall } from "../utils/passportCall.js";
+import { authorizationJwt } from "../passport-jwt/jwtPassport.middleware.js";
+import CartController from "../controllers/carts.controller.js";
 
 
 const router = Router();
@@ -39,21 +40,21 @@ router.get("/products", passportCall('jwt'), async (req, res) => {
 });
 
 // product
-router.get("/products/:pid", async (req, res) => {
+router.get("/products/:pid", passportCall('jwt'), async (req, res) => {
   const productId = req.params.pid;
   let product = await productService.getProductById(productId);
   res.render("product", { product })
 });
 
 // carrito
-router.get("/carts/:cid", async (req, res) => {
+router.get("/carts/:cid", passportCall('jwt'), async (req, res) => {
   const cartId = req.params.cid;
   let cart = await cartService.getCartById(cartId);
   res.render("cart", { cart })
 })
 
 //  productos en tiempo real 
-router.get("/realtimeproducts", async (req, res) => {
+router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"]), async (req, res) => {
   try {
     let realTimeProducts = await productService.getProducts();
     res.render("realTimeProducts", { realTimeProducts: realTimeProducts });
@@ -63,9 +64,8 @@ router.get("/realtimeproducts", async (req, res) => {
   }
 });
 
-
 // chat 
-router.get("/chat", (req, res) => {
+router.get("/chat", passportCall('jwt'), authorizationJwt(["USER"]), (req, res) => {
   res.render("chat");
 })
 

@@ -21,8 +21,8 @@ router.post("/register", userController.registerUser);
 router.get("/logout", userController.logoutUser);
 
 // current user
-router.get("/current", [passportCall('jwt'), authorizationJwt(['ADMIN'])], userController.currentUser);
+router.get("/current", passportCall('jwt'), authorizationJwt(["USER"]), userController.getCurrentUser);
 
-//router.get("/profile", passportCall('jwt'), userController.currentUser);
+
 
 export default router;

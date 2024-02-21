@@ -1,6 +1,8 @@
 import { Router } from "express";
-//import CartController from "../../controllers/carts.controller.js";
 import CartController from "../../controllers/carts.controller.js";
+import { passportCall } from "../../utils/passportCall.js"
+import { authorizationJwt } from "../../passport-jwt/jwtPassport.middleware.js";
+
 
 const cartsRouter = Router();
 
@@ -22,7 +24,6 @@ cartsRouter.delete("/:cid/products", cartController.deleteAllProductsInCart);
 // endpoint para eliminar un producto del carrito
 cartsRouter.delete("/:cid/products/:pid", cartController.deleteProductInCart);
 
-
 // endpoint para actualizar los productos del carrito 
 cartsRouter.put("/:cid", cartController.updateAllProductsInCart);
 
@@ -32,9 +33,12 @@ cartsRouter.put("/:cid/products/:pid", cartController.updateProductQuantity);
 // endpoint para eliminar un carrito
 cartsRouter.delete("/:cid", cartController.deleteCart);
 
+
 // endpoint para obtener carrito por id
 cartsRouter.get("/:cid", cartController.getCartById);
 
+// endpoint para finalizar compra y crear ticket
+cartsRouter.post("/:cid/purchase", passportCall('jwt'), cartController.createPurchaseTicket);
 
 
 export default cartsRouter;

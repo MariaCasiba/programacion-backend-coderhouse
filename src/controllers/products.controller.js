@@ -1,16 +1,15 @@
-
-import { ProductService } from '../daos/mongo/productsDaoMongo.js';
+import  { productService } from "../repositories/service.js"
 
 class ProductController {
     constructor() {
-        this.productsService = new ProductService();
+        this.productService = productService;
     }
 
     // obtener productos
     getProducts = async (req, res) => {
         try {
             const { limit, page, query, sort } = req.query;
-            const products = await this.productsService.getProducts({
+            const products = await this.productService.getProducts({
                 limit,
                 page,
                 query,
@@ -37,7 +36,7 @@ class ProductController {
     getProductById = async (req, res) => {
         try {
             const { pid } = req.params;
-            const product = await this.productsService.getProductById(pid);
+            const product = await this.productService.getProductById(pid);
             if(product) {
                 res.send({status: "success", payload: product });
             } else {
@@ -59,7 +58,7 @@ class ProductController {
             }
             status = !status && true;
             thumbnails = thumbnails || [];
-            const productAdded = await this.productsService.addProduct({
+            const productAdded = await this.productService.addProduct({
                 title,
                 description,
                 code,
@@ -94,7 +93,7 @@ class ProductController {
             }
             status = !status && true;
             thumbnails = thumbnails || [];
-            const productUpdated = await this.productsService.updateProduct(pid, {
+            const productUpdated = await this.productService.updateProduct(pid, {
                 title,
                 description,
                 code,
@@ -122,7 +121,7 @@ class ProductController {
     deleteProduct = async (req, res) => {
         try {
             const { pid } = req.params;
-            const productDeleted = await this.productsService.deleteProduct(pid);
+            const productDeleted = await this.productService.deleteProduct(pid);
             if (productDeleted) {
                 console.log("Producto eliminado correctamente");
                 res.status(200).send({status: "success",message: "El Producto se eliminó correctamente!"});

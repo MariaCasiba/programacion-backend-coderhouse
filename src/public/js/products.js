@@ -40,6 +40,7 @@ const obtenerIdCarrito = async () => {
         }
 
         const existingCart = localStorage.getItem("cart");
+        console.log("existingCart: ", existingCart)
 
         if (existingCart) {
             const cart = JSON.parse(existingCart);
@@ -49,10 +50,12 @@ const obtenerIdCarrito = async () => {
             }
         }
 
-        
         const response = await fetch("/api/users/current", {
             method: "GET",
-            headers: { "Content-type": "application/json; charset=UTF-8" }
+            headers: { "Content-type": "application/json; charset=UTF-8",
+        
+        }
+            
         });
 
         const userData = await response.json();
@@ -76,6 +79,7 @@ const obtenerIdCarrito = async () => {
             return null;
         }
         
+        
     } catch (error) {
         console.log("Error en obtener el Id del Carrito! " + error);
         return null;
@@ -88,7 +92,7 @@ const obtenerIdCarrito = async () => {
 // agregar producto al carrito
 const agregarProductoAlCarrito = async (pid) => {
     try {
-       
+    
         const responseUser = await fetch("/api/sessions/current", {
             method: "GET",
             headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -102,8 +106,7 @@ const agregarProductoAlCarrito = async (pid) => {
         }
 
     
-        const cid = userData.reqUser.cartId;
-        console.log("userData.reqUser.cartId: ", userData.reqUser.cartId)
+        const cid = userData.user.cartId;
 
         if (!cid) {
             console.log("No se pudo obtener el id del carrito");
@@ -133,6 +136,8 @@ const agregarProductoAlCarrito = async (pid) => {
         }
     }
 }
+
+
 
 // btn agregar al carrito
 document.addEventListener('DOMContentLoaded', () => {
@@ -168,3 +173,72 @@ const btnLogout = document.getElementById("btnLogout");
         });
     }
 });
+
+
+const terminarCompra = async(req, res) => {
+    try {
+        const responseUser = await fetch("/api/sessions/current", {
+            method: "GET",
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+
+        const userData = await responseUser.json();
+
+        if (!responseUser.ok) {
+            console.log("Error al obtener información del usuario:", userData && userData.error);
+            return;
+        }
+
+    
+        const cid = userData.user.cartId;
+
+        console.log("cid en terminar compra userData.user.cartId", userData.user.cartId)
+
+        if (!cid) {
+            console.log("No se pudo obtener el id del carrito");
+            return;
+        }
+
+        const responseCart = await fetch(`/api/carts/${cid}`, {
+            method: "GET",
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+
+        const cartData = await responseCart.json();
+        if (!responseCart.ok) {
+            console.log("Error al obtener los datos del carrito: ", cartData && cartData.error);
+            return
+        }
+
+        const { products } = cartData;
+        const ticketData = {
+            products
+        };
+
+        const url = `/api/carts/${cid}/purchase`;
+        console.log("url de la solicitud: ", url);
+
+    const responsePurchase = await fetch(url, {
+        method: 'POST',
+        credentials: "include",
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: JSON.stringify(ticketData)
+    });
+
+    console.log("estado de la respuesta: ", responsePurchase.status);
+
+    if (!responsePurchase.ok) {
+        console.error("Error en la respuesta", responsePurchase.statusText);
+        const text = await response.text();
+        console.error(text);
+        return;
+    }
+
+    const data = await responsePurchase.json();
+    console.log("Compra realizada con éxito", data);
+
+    } catch (error) {
+        console.error('Error al realizar la compra:', error);
+        
+    }
+}
