@@ -34,17 +34,17 @@
             
             <h2 class="m-3 p-2">Productos</h2>
             <ul class="list-group m-2 p-2" id="rt-products">
-                {{#each realTimeProducts}}
+                {{#each realTimeProducts.docs}}
                 <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto" id="{{this._id}}">
-                        <div class="fw-bold">Nombre: {{this.title}}</div>
+                    <div class="ms-2 me-auto" id="{{_id}}">
+                        <div class="fw-bold">Nombre: {{title}}</div>
                         <div>
-                            <b>Descripción:</b> {{this.description}}
-                            <b>Code:</b> {{this.code}}
-                            <b>Precio: $</b> {{this.price}}
-                            <b>Stock:</b> {{this.stock}} 
-                            <b>Categoría:</b> {{this.category}} 
-                            <button class="delete-button btn btn-primary mb-3" data-product-id="{{this._id}}">Eliminar</button>
+                            <b>Descripción:</b> {{description}}
+                            <b>Code:</b> {{code}}
+                            <b>Precio: $</b> {{price}}
+                            <b>Stock:</b> {{stock}} 
+                            <b>Categoría:</b> {{category}} 
+                            <button class="delete-button btn btn-primary mb-3" data-product-id="{{_id}}">Eliminar</button>
                         </div>
                         
                     </div>

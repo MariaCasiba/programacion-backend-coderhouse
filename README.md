@@ -34,8 +34,10 @@ GET /register: Página de registro de usuario.
 
 
 Rutas Protegidas (Requieren Autenticación)
+
 GET /products: Página de productos (requiere autenticación).
-GET /product: Página de detalle de un producto (requiere autenticación).
+GET /realtimeproducts : Página para ver productos en tiempo real (requiere autenticación).
+GET /products/:pid: Página de detalle de un producto (requiere autenticación).
 GET /profile: Página de perfil de usuario (requiere autenticación).
 GET /logout: Cerrar sesión del usuario. (requiere autenticación).
-GET /cart: Página con el carrito de compras (requiere autenticación).
+GET /carts/:cid: Página con el carrito de compras (requiere autenticación).

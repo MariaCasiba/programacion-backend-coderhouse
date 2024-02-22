@@ -3,6 +3,8 @@ import productsRouter from './apis/products.router.js';
 import cartsRouter from './apis/carts.router.js';
 import sessionsRouter from './apis/sessions.router.js';
 import viewsRouter from './views.router.js';
+import emailRouter from './apis/email.router.js';
+import smsRouter from './apis/sms.router.js';
 
 
 const router = express.Router();
@@ -20,5 +22,7 @@ router.use('/', viewsRouter);
 // rutas para vistas de sesiones
 router.use('/api/sessions/', sessionsRouter);
 
+router.use('/api/email', emailRouter);
+router.use('/api/sms', smsRouter)
 
 export default router;

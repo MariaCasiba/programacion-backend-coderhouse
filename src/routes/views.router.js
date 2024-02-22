@@ -3,7 +3,6 @@ import { ProductService } from "../daos/mongo/productsDaoMongo.js";
 import { CartService } from "../daos/mongo/cartsDaoMongo.js";
 import { passportCall } from "../utils/passportCall.js";
 import { authorizationJwt } from "../passport-jwt/jwtPassport.middleware.js";
-import CartController from "../controllers/carts.controller.js";
 
 
 const router = Router();
@@ -54,8 +53,10 @@ router.get("/carts/:cid", passportCall('jwt'), async (req, res) => {
 //  productos en tiempo real 
 router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"]), async (req, res) => {
   try {
-    let realTimeProducts = await productService.getProducts();
-    res.render("realTimeProducts", { realTimeProducts: realTimeProducts });
+    const {limit, page, query, sort} = req.query;
+    let realTimeProducts = await productService.getProducts({limit, page, query, sort});
+    res.render("realTimeProducts", { realTimeProducts });
+    console.log("Productos en tiempo real:", realTimeProducts);
   } catch (error) {
     console.error("Error al obtener productos en tiempo real:", error);
     res.status(500).render("error", { message: "Error interno del servidor" });
