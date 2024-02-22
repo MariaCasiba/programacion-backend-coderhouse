@@ -1,6 +1,5 @@
 // para validar rol rutas protegidas
 
-
 export const authorizationJwt = roleArray => {
     return async (req, res, next) => {
         try {

@@ -38,7 +38,7 @@ cartsRouter.delete("/:cid", cartController.deleteCart);
 cartsRouter.get("/:cid", cartController.getCartById);
 
 // endpoint para finalizar compra y crear ticket
-cartsRouter.post("/:cid/purchase", passportCall('jwt'), cartController.createPurchaseTicket);
+cartsRouter.post("/:cid/purchase", passportCall('jwt'), authorizationJwt(["USER"]), cartController.createPurchaseTicket);
 
 
 export default cartsRouter;

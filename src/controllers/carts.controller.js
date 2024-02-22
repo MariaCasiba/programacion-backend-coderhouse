@@ -327,11 +327,12 @@ class CartController {
             };
 
             const newTicket = await this.ticketService.createTicket(ticketData);
+            
             res.json({
                 status: "success",
                 message: "Se completó la compra de los productos seleccionados.",
                 ticket: newTicket,
-                productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock : undefined
+                productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock.map(item => item.product) : undefined
             })
 
         
@@ -362,4 +363,3 @@ function generateUniqueCode(length = 8) {
 
 
 export default CartController;
-

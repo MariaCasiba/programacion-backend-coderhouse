@@ -10,8 +10,6 @@ class TicketController {
         try {
             
             const { code, purchase_datetime, amount, purchaser } = req.body;
-            console.log("Datos recibidos del cliente en createTicket: ", {code, purchase_datetime, amount, purchaser})
-
 
             if(!code || !purchase_datetime || !amount || !purchaser) {
                 return res.status(400).json({ message: "Datos incompletos para crear el ticket de compra."})

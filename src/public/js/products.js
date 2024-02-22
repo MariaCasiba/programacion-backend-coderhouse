@@ -1,4 +1,3 @@
-
 // crear carrito
 const crearCarrito = async () => {
     try {
@@ -28,7 +27,6 @@ const crearCarrito = async () => {
         return null;
     }
 }
-
 
 
 // obtener carrito por id
@@ -66,7 +64,6 @@ const obtenerIdCarrito = async () => {
             localStorage.setItem("cart", JSON.stringify({ _id: existingCartId }));
             return existingCartId;
         }
-
         
         const newCart = await crearCarrito();
 
@@ -78,15 +75,12 @@ const obtenerIdCarrito = async () => {
             console.log("No se pudo obtener el id del carrito");
             return null;
         }
-        
-        
+                
     } catch (error) {
         console.log("Error en obtener el Id del Carrito! " + error);
         return null;
     }
 }
-
-
 
 
 // agregar producto al carrito
@@ -104,7 +98,6 @@ const agregarProductoAlCarrito = async (pid) => {
             console.log("Error al obtener información del usuario:", userData && userData.error);
             return;
         }
-
     
         const cid = userData.user.cartId;
 
@@ -192,7 +185,7 @@ const terminarCompra = async(req, res) => {
     
         const cid = userData.user.cartId;
 
-        console.log("cid en terminar compra userData.user.cartId", userData.user.cartId)
+        console.log("cid en terminarCompra userData.user.cartId", userData.user.cartId)
 
         if (!cid) {
             console.log("No se pudo obtener el id del carrito");
@@ -204,13 +197,26 @@ const terminarCompra = async(req, res) => {
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
 
+
         const cartData = await responseCart.json();
-        if (!responseCart.ok) {
-            console.log("Error al obtener los datos del carrito: ", cartData && cartData.error);
+        console.log("Respuesta de la API: " , cartData)
+
+        if(!cartData || !cartData.payload || !cartData.payload.products) {
+            console.log("La respuesta de la API no contiene el atributo products")
             return
         }
 
-        const { products } = cartData;
+    
+
+        const { products } = cartData.payload;
+
+        const outOfStockProducts = products.filter(product => product.product.stock === 0);
+
+        if (outOfStockProducts.length > 0) {
+            alert("Algunos productos no tienen suficiente stock. Se continuará la compra con los productos disponibles.")
+        } 
+
+        
         const ticketData = {
             products
         };
@@ -225,8 +231,6 @@ const terminarCompra = async(req, res) => {
         body: JSON.stringify(ticketData)
     });
 
-    console.log("estado de la respuesta: ", responsePurchase.status);
-
     if (!responsePurchase.ok) {
         console.error("Error en la respuesta", responsePurchase.statusText);
         const text = await response.text();
@@ -236,6 +240,9 @@ const terminarCompra = async(req, res) => {
 
     const data = await responsePurchase.json();
     console.log("Compra realizada con éxito", data);
+
+    alert("Gracias por tu compra!")
+    window.location.href = '/products'
 
     } catch (error) {
         console.error('Error al realizar la compra:', error);

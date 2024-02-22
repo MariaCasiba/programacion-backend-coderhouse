@@ -13,7 +13,6 @@ socket.on("connect", () => {
 })
 
 
-
 // Manejar mensajes recibidos
 
 socket.on("messages", (data) => {
@@ -26,15 +25,14 @@ socket.on("messages", (data) => {
     messages.innerHTML = salida;
     });
 
-  // Enviar mensaje
+
     btnSendMessage.addEventListener("click", () => {
         const userValue = user.value;
         const messageValue = message.value;
 
     if (userValue && messageValue) {
         socket.emit("newMessage", { user: userValue, message: messageValue });
-
-      // Limpiar campos
+    
         user.value = "";
         message.value = "";
     }

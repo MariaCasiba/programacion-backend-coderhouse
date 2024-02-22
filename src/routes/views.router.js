@@ -25,11 +25,9 @@ router.get("/", async (req, res) => {
 // products
 router.get("/products", passportCall('jwt'), async (req, res) => {
   try {
-    console.log('Parámetros de paginación recibidos en el enrutador de vistas:', req.query);
     
     let products = await productService.getProducts(req.query);
     const user = req && req.user;
-    console.log('Datos del usuario en sesión: ', user)
     res.render("products", { products, user } );
 
   } catch (error) {
@@ -89,8 +87,6 @@ router.get("/profile", passportCall('jwt'), (req, res) => {
   res.redirect("/login");
   }
 })
-
-
 
 
 export default router;

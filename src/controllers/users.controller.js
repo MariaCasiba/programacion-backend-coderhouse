@@ -31,7 +31,6 @@ class UserController {
             } else {
 
                 user = await this.userService.loginUser(email, password)
-                console.log("User en login del controller: ", user)
     
                 if (!user) {
                     return res.status(401).send({
@@ -160,8 +159,6 @@ class UserController {
     getCurrentUser = async (req, res) => {
         try {
             const userDto = await this.userService.getCurrentUser(req);
-            console.log("userDto: ", userDto)
-            console.log("userDto.cartId: ", userDto.cartId)
             res.send({ user: userDto}) 
 
         } catch (error) {
