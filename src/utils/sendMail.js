@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { configObject } from '../config/index.js';
 import __dirname from './index.js';
 
+
 const transport = nodemailer.createTransport({
     service:'gmail',
     port: 587,
@@ -28,7 +29,7 @@ export const sendMail = async (destino, subjet, html) => {
 // dinámico - con attachment
 export const sendMail = async (destino, subject, html) => {
     return await transport.sendMail({
-        from: 'Este mail lo envía <casibamariaines@gmail.com>',
+        from: 'E-commerce <casibamariaines@gmail.com>',
         to: destino,
         subject,
         html,

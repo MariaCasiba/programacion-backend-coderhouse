@@ -1,5 +1,5 @@
 import { cartService, productService, ticketService } from "../repositories/service.js";
-
+import { sendMail }  from "../utils/sendMail.js";
 
 class CartController {
     constructor() {
@@ -304,6 +304,7 @@ class CartController {
             await this.cartService.updateCartProducts(cid, productsOutOfStock);
 
             if (productsSucessfulPurchase.length === 0) {
+                console.error("No se pudo completar  la compra de los productos seleccionados debido a falta de stock: ", productsOutOfStock)
                 return res.status(400).json({
                     error: "No se pudo completar la compra de los productos seleccionados",
                     productsOutOfStock,
@@ -317,7 +318,7 @@ class CartController {
 
             console.log("totalAmount: ", totalAmount)
 
-
+            
             // ticket
             const ticketData = {
                 code: generateUniqueCode(),
@@ -328,12 +329,23 @@ class CartController {
 
             const newTicket = await this.ticketService.createTicket(ticketData);
             
-            res.json({
-                status: "success",
-                message: "Se completó la compra de los productos seleccionados.",
-                ticket: newTicket,
-                productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock.map(item => item.product) : undefined
-            })
+
+            let emailMessage = `Gracias por tu compra!\nDetalles de la compra:\n`;
+
+            productsSucessfulPurchase.forEach((product, index) => {
+                emailMessage += `${index + 1}. ${product.product.title}: $${product.product.price}, Cantidad: ${product.quantity}\n`;
+            });
+    
+            emailMessage += `\nEl Total de la compra es: $${totalAmount}.`;
+
+            
+            await sendMail(req.user.email, 'Compra realizada con éxito', emailMessage);
+                        res.json({
+                            status: "success",
+                            message: "Se completó la compra de los productos seleccionados.",
+                            ticket: newTicket,
+                            productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock.map(item => item.product) : undefined
+                        })
 
         
         } catch (error) {

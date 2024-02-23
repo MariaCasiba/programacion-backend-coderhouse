@@ -199,14 +199,12 @@ const terminarCompra = async(req, res) => {
 
 
         const cartData = await responseCart.json();
-        console.log("Respuesta de la API: " , cartData)
+        console.log("CartData: " , cartData)
 
         if(!cartData || !cartData.payload || !cartData.payload.products) {
-            console.log("La respuesta de la API no contiene el atributo products")
+            console.log("CartData no contiene el atributo products")
             return
         }
-
-    
 
         const { products } = cartData.payload;
 
@@ -216,7 +214,11 @@ const terminarCompra = async(req, res) => {
             alert("Algunos productos no tienen suficiente stock. Se continuará la compra con los productos disponibles.")
         } 
 
-        
+        if (outOfStockProducts.length === products.length) {
+            alert("Ningún producto tiene suficiente stock. No se pudo completar la compra.");
+            return; 
+        }
+
         const ticketData = {
             products
         };
@@ -241,7 +243,7 @@ const terminarCompra = async(req, res) => {
     const data = await responsePurchase.json();
     console.log("Compra realizada con éxito", data);
 
-    alert("Gracias por tu compra!")
+    alert("Gracias por tu compra! Se envió un email con los detalles de tu compra.")
     window.location.href = '/products'
 
     } catch (error) {
