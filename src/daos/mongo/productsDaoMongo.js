@@ -6,16 +6,10 @@ export class ProductService {
         this.model = productModel;
     }
 
-    // obtener los productos
-    getProducts = async ({ limit = 10, page = 1, query = {}, sort = 'asc' }) => {
-        try {
 
-            const sortOptions = {};
-            if (sort === "asc") {
-                sortOptions.price = 1;
-            } else if (sort === "desc") {
-                sortOptions.price = -1;
-            }
+
+    getProducts = async ({ limit, page, query, sortOptions}) => {
+        try {
 
             const products = await productModel.paginate(query, { limit, page, sort: sortOptions });
             
@@ -25,6 +19,7 @@ export class ProductService {
             throw error;
         }
     }
+    
 
     // obtener los productos por id
     getProductById = async (pid) => {

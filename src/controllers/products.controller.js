@@ -5,32 +5,38 @@ class ProductController {
         this.productService = productService;
     }
 
-    // obtener productos
-    getProducts = async (req, res) => {
-        try {
-            const { limit, page, query, sort } = req.query;
-            const products = await this.productService.getProducts({
-                limit,
-                page,
-                query,
-                sort
-            });
-            
-            res.send({
-                status: "success",
-                payload: products.docs,
-                totalPages: products.totalPages,
-                prevPage: products.hasPrevPage ? products.prevPage : null,
-                nextPage: products.hasNextPage ? products.nextPage : null,
-                page: products.page,
-                hasPrevPage: products.hasPrevPage,
-                hasNextPage: products.hasNextPage
-            });
-        } catch (error) {
-            console.error("Error al obtener los productos en la ruta GET", error);
-            res.status(500).send({ status: "error", message: "Error del servidor al obtener los productos" });
+
+getProducts = async (req, res) => {
+    try {
+        const { limit = 10, page = 1, query = {}, sort } = req.query;
+        
+        const sortOptions = {};
+        if (sort === "asc") {
+            sortOptions.price = 1;
+        } else if (sort === "desc") {
+            sortOptions.price = -1;
         }
+
+        const products = await this.productService.getProducts({ limit, page, query, sortOptions });
+        console.log("products: ", products)
+        
+        res.send({
+            status: "success",
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.hasPrevPage ? products.prevPage : null,
+            nextPage: products.hasNextPage ? products.nextPage : null,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los productos en la ruta GET", error);
+        res.status(500).send({ status: "error", message: "Error del servidor al obtener los productos" });
     }
+}
+
 
     // obtener productos por su id
     getProductById = async (req, res) => {

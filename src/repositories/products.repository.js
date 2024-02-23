@@ -5,9 +5,9 @@ class ProductRepository {
         this.productsService = new ProductService();
     }
 
-    async getProducts({ limit = 10, page = 1, query = {}, sort = 'asc' }) {
+    async getProducts({ limit, page, query, sortOptions }) {
         try {
-            const products = await this.productsService.getProducts({ limit, page, query, sort });
+            const products = await this.productsService.getProducts({ limit, page, query, sortOptions });
             return products;
         } catch (error) {
             console.error("Error al obtener los productos", error);

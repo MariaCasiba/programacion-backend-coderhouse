@@ -11,7 +11,6 @@ const productService = new ProductService();
 const cartService = new CartService();
 
 //  home 
-
 router.get("/", async (req, res) => {
 
   if (req.user) {
@@ -24,17 +23,18 @@ router.get("/", async (req, res) => {
 // products
 router.get("/products", passportCall('jwt'), async (req, res) => {
   try {
-    
-    let products = await productService.getProducts(req.query);
+    const { limit = 10, page = 1, query = {}, sort } = req.query;
+    let products = await productService.getProducts({ limit, page, query, sort });
     const user = req && req.user;
-    res.render("products", { products, user } );
-
+    res.render("products", { products, user});
+    
   } catch (error) {
     console.error("Error al obtener los productos", error);
     res.status(500).send("Error interno del server");
   }
   
-});
+}); 
+
 
 // product
 router.get("/products/:pid", passportCall('jwt'), async (req, res) => {
