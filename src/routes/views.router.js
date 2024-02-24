@@ -53,10 +53,9 @@ router.get("/carts/:cid", passportCall('jwt'), async (req, res) => {
 //  productos en tiempo real 
 router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"]), async (req, res) => {
   try {
-    const {limit, page, query, sort} = req.query;
+    const {limit = 100, page= 1, query = {}, sort} = req.query;
     let realTimeProducts = await productService.getProducts({limit, page, query, sort});
     res.render("realTimeProducts", { realTimeProducts });
-    console.log("Productos en tiempo real:", realTimeProducts);
   } catch (error) {
     console.error("Error al obtener productos en tiempo real:", error);
     res.status(500).render("error", { message: "Error interno del servidor" });
