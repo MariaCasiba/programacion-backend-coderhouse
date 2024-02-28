@@ -9,17 +9,11 @@ export class UserService {
 
   // agregar usuario
     addUser = async (user) => {
-        try {
         const cartId = await this.cartService.createCart();
         user.cartId = cartId;
 
         const newUser = await this.userModel.create(user);
-
         return newUser;
-        } catch (error) {
-        console.error("Error al agregar el usuario!", error);
-        return null;
-        }
     };
 
   // obtener usuarios
@@ -37,7 +31,6 @@ export class UserService {
         return await this.userModel.findOne({ email: uemail });
         
     };
-
   
   // actualizar usuario
     updateUser = async (uid, userUpdate) => {

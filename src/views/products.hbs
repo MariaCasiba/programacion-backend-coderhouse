@@ -23,7 +23,7 @@
                 <a href="/carts/{{user.cartId}}" class="btn btn-dark" >Ir al Carrito</a>
             </div>
         </div>
-
+        
         <div class="row justify-content-center text-center">    
             {{#each products.docs}}
                 <div class="col col-md-3 m-3">
@@ -33,7 +33,7 @@
                             <h5 class="card-title m-2 p-3">{{this.title}}</h5>
                             <p class="card-text">Precio: ${{this.price}}</p>
                             <a href="/products/{{this._id}}" class="btn btn-outline-dark text-center m-2">Ver detalle</a>
-                            <button type="submit" class="btn btn-dark text-center m-2 addToCartBtn" data-productid="{{this._id}}">Agregar al carrito</button>
+                            <button type="submit" class="btn btn-dark text-center m-2 addToCartBtn" data-productid="{{this._id}}" >Agregar al carrito</button>
                         </div>
                     </div>                 
                 </div>  
@@ -76,3 +76,4 @@
 
     {{/if}}
 </div>
+

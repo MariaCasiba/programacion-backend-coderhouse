@@ -6,6 +6,7 @@ class ProductRepository {
     }
 
     async getProducts({ limit, page, query, sortOptions }) {
+        
         try {
             const products = await this.productsService.getProducts({ limit, page, query, sortOptions });
             return products;

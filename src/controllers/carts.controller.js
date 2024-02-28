@@ -1,5 +1,7 @@
 import { cartService, productService, ticketService } from "../repositories/service.js";
 import { sendMail }  from "../utils/sendMail.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
 
 class CartController {
     constructor() {
@@ -26,27 +28,25 @@ class CartController {
 
 
     // Obtener un carrito por su id
-    getCartById = async (req, res) => {
+    getCartById = async (req, res, next) => {
         try {
-            console.log("entrando en getCartById")
             const { cid } = req.params;
-            console.log("cid en getCArtById: ", cid)
             const cart = await this.cartService.getCartById(cid);
         
-            if (cart) {
-                res.send({ status: "success", payload: cart });
+            if(cart) {
+                res.send({status: "success", payload: cart });
             } else {
-                res.status(400).send({
-                    status: "error",
-                    message: "Error! No se encuentra el carrito solicitado."
+                const cartNotFoundError = CustomError.createError({
+                    name: 'Cart not found',
+                    message: `Error! Cart con id ${cid} no encontrado en la base de datos`,
+                    code: EErrors.RESOURCE_NOT_FOUND_ERROR,
+                    cause: "Cart not found"
                 });
+                throw cartNotFoundError
             }
+
         } catch (error) {
-            console.error("Error en la ruta GET /carts/:cid", error);
-            res.status(500).send({
-                status: "error",
-                message: "Error del servidor al obtener el carrito solicitado."
-            });
+            next(error)
         }
     }
 
@@ -101,7 +101,7 @@ class CartController {
     }
 
     // agregar producto al carrito
-    addProductToCart = async (req, res) => {
+    addProductToCart = async (req, res, next) => {
         try {
             const { cid, pid } = req.params;
     
@@ -113,7 +113,13 @@ class CartController {
             const product = await this.productService.getProductById(pid); 
     
             if (!cart || !product) {
-                return res.status(404).send({ status: "error", message: "No se encontró el carrito o el producto." });
+                const cartProductNotFoundError = CustomError.createError({
+                    name: 'Cart or Product not found',
+                    message: 'Error! No se encontró el carrito o el producto',
+                    code: EErrors.RESOURCE_NOT_FOUND_ERROR,
+                    cause: 'Producto o carrito no encontrado'
+                })
+                throw cartProductNotFoundError
             }
     
             const existingProduct = cart.products.find(item => item.product.equals(product._id));
@@ -129,11 +135,16 @@ class CartController {
             if (result) {
                 return res.status(200).send({ status: "success", message: "El producto se agregó correctamente o se actualizó la cantidad." });
             } else {
-                return res.status(500).send({ status: "error", message: "No se pudo agregar el producto al carrito." });
+                const addToCartError = CustomError.createError({
+                    name: 'Add to Cart Error',
+                    message: 'No se pudo agregar el producto al carrito',
+                    code: EErrors.DATABASE_ERROR,
+                    cause: 'No se agregó el producto al carrito'
+                })
+                throw addToCartError;
             }
         } catch (error) {
-            console.error("Error en la ruta POST /carts/:cid/products/:pid", error);
-            res.status(500).send({ status: "error", message: "Error del servidor al agregar el producto al carrito." });
+            next(error)
         }
     }
 
@@ -184,14 +195,20 @@ class CartController {
     }
 
     // actualizar los productos del carrito
-    updateAllProductsInCart = async (req, res) => {
+    updateAllProductsInCart = async (req, res, next) => {
         try {
             const { cid } = req.params;
             const updatedProducts = req.body;
             
             const cart = await this.cartService.getCartById(cid);
             if (!cart) {
-                return res.status(404).send({ status: "error", message: "No se encontró el carrito." });
+                const cartNotFoundError = CustomError.createError({
+                    name: 'Cart not found',
+                    message: `Error! No se encontró el carrito con ID ${cid}.`,
+                    code: EErrors.RESOURCE_NOT_FOUND_ERROR,
+                    cause: 'No se encontró el carrito'
+                });
+                throw cartNotFoundError;
             }
 
             cart.products = [];
@@ -199,7 +216,13 @@ class CartController {
             for (const updatedProduct of updatedProducts) {
                 const product = await this.productService.getProductById(updatedProduct.productId);
                 if (!product) {
-                    return res.status(404).send({ status: "error", message: `El producto con ID ${updatedProduct.productId} no existe.` });
+                    const productNotFoundError = CustomError.createError({
+                        name: 'Product not found',
+                        message: `Error! No se encontró el producto con ID ${updatedProduct.productId}.`,
+                        code: EErrors.RESOURCE_NOT_FOUND_ERROR,
+                        cause: 'No se encontró el producto.'
+                    });
+                    throw productNotFoundError;
                 }
                 cart.products.push({ product: product._id, quantity: updatedProduct.quantity });
             }
@@ -208,11 +231,16 @@ class CartController {
             if (result) {
                 return res.status(200).send({ status: "success", message: "Carrito actualizado correctamente." });
             } else {
-                return res.status(404).send({ status: "error", message: "Error! No se pudo actualizar el carrito." });
+                const updateCartError = CustomError.createError({
+                    name: 'Update Cart Error',
+                    message: 'Error! No se pudo actualizar el carrito.',
+                    code: EErrors.DATABASE_ERROR,
+                    cause: 'No se puedo actualizar el carrito'
+                });
+                throw updateCartError;
             }
         } catch (error) {
-            console.error("Error en la ruta PUT /carts/:cid", error);
-            res.status(500).send({ status: "error", message: "Error del servidor al actualizar el carrito." });
+            next(error)
         }
     }
 
@@ -329,23 +357,31 @@ class CartController {
 
             const newTicket = await this.ticketService.createTicket(ticketData);
             
-
-            let emailMessage = `Gracias por tu compra!\nDetalles de la compra:\n`;
+            let htmlContent = `
+            <div>
+                <h1>¡Gracias por tu compra!</h1>
+                <p>Detalles de la compra:</p>
+                <ul>
+            `;
 
             productsSucessfulPurchase.forEach((product, index) => {
-                emailMessage += `${index + 1}. ${product.product.title}: $${product.product.price}, Cantidad: ${product.quantity}\n`;
+                htmlContent += `<li>${index + 1}. ${product.product.title}: $${product.product.price}, Cantidad: ${product.quantity}</li>`;
             });
-    
-            emailMessage += `\nEl Total de la compra es: $${totalAmount}.`;
 
-            
-            await sendMail(req.user.email, 'Compra realizada con éxito', emailMessage);
-                        res.json({
-                            status: "success",
-                            message: "Se completó la compra de los productos seleccionados.",
-                            ticket: newTicket,
-                            productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock.map(item => item.product) : undefined
-                        })
+            htmlContent += `
+                    </ul>
+                    <p>El Total de la compra es: $${totalAmount}.</p>
+                </div>
+            `;
+
+            await sendMail(req.user.email, 'Compra realizada con éxito', htmlContent);
+
+            res.json({
+                status: "success",
+                message: "Se completó la compra de los productos seleccionados.",
+                ticket: newTicket,
+                productsOutOfStock: productsOutOfStock.length > 0 ? productsOutOfStock.map(item => item.product) : undefined
+            });    
 
         
         } catch (error) {

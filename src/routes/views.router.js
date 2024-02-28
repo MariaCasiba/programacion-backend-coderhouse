@@ -35,16 +35,15 @@ router.get("/products", passportCall('jwt'), async (req, res) => {
   
 }); 
 
-
 // product
-router.get("/products/:pid", passportCall('jwt'), async (req, res) => {
+router.get("/products/:pid", passportCall('jwt'),  async (req, res) => {
   const productId = req.params.pid;
   let product = await productService.getProductById(productId);
   res.render("product", { product })
 });
 
 // carrito
-router.get("/carts/:cid", passportCall('jwt'), async (req, res) => {
+router.get("/carts/:cid", passportCall('jwt'), authorizationJwt(["USER"]), async (req, res) => {
   const cartId = req.params.cid;
   let cart = await cartService.getCartById(cartId);
   res.render("cart", { cart })
@@ -53,7 +52,7 @@ router.get("/carts/:cid", passportCall('jwt'), async (req, res) => {
 //  productos en tiempo real 
 router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"]), async (req, res) => {
   try {
-    const {limit = 100, page= 1, query = {}, sort} = req.query;
+    const {limit = 500, page= 1, query = {}, sort} = req.query;
     let realTimeProducts = await productService.getProducts({limit, page, query, sort});
     res.render("realTimeProducts", { realTimeProducts });
   } catch (error) {

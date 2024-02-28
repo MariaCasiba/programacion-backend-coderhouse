@@ -5,6 +5,7 @@ import sessionsRouter from './apis/sessions.router.js';
 import viewsRouter from './views.router.js';
 import emailRouter from './apis/email.router.js';
 import smsRouter from './apis/sms.router.js';
+import mockRouter from './apis/mocks.router.js';
 
 
 const router = express.Router();
@@ -22,7 +23,17 @@ router.use('/', viewsRouter);
 // rutas para vistas de sesiones
 router.use('/api/sessions/', sessionsRouter);
 
+// rutas para pruebas de email y sms
 router.use('/api/email', emailRouter);
 router.use('/api/sms', smsRouter)
+
+// ruta para mocking
+router.use('/', mockRouter);
+
+router.use('*', (req, res) => {
+    res.status(404).send('not found')
+})
+
+
 
 export default router;

@@ -6,95 +6,62 @@ export class ProductService {
         this.model = productModel;
     }
 
-
-
+    // obtener todos los productos
     getProducts = async ({ limit, page, query, sortOptions}) => {
-        try {
-
-            const products = await productModel.paginate(query, { limit, page, sort: sortOptions });
-            
-            return products;
-        } catch (error) {
-            console.error("Error al obtener los productos", error);
-            throw error;
-        }
+        const products = await productModel.paginate(query, { limit, page, sort: sortOptions });
+        return products;
     }
-    
 
     // obtener los productos por id
     getProductById = async (pid) => {
-        try {
-            const product = await productModel.findById(pid);
-            return product || "No se encontró el producto con id: " + pid;
-        } catch (error) {
-            console.error("Error al obtener el producto por su id", error);
-            throw error;
-        }
+        const product = await productModel.findById(pid);
+        return product || "No se encontró el producto con id: " + pid;
     }
 
     // agregar producto
     addProduct = async ({ title, description, code, price, status, stock, category, thumbnails }) => {
-        try {
-            const newProduct = await productModel.create({
-                title,
-                description,
-                code,
-                price,
-                status,
-                stock,
-                category,
-                thumbnails,
-            });
-            console.log("Producto agregado");
-            return newProduct;
-        } catch (error) {
-            console.error("Error al agregar el producto", error);
-            throw error;
-        }
+        const newProduct = await productModel.create({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+        });
+        console.log("Producto agregado");
+        return newProduct;
     }
 
     // actualizar producto
     updateProduct = async (id, product) => {
-        try {
-            const updatedProduct = await productModel.findByIdAndUpdate(id, product, { new: true });
-            if (updatedProduct) {
-                console.log("Producto con id: " + id + " actualizado", updatedProduct);
-                return true;
-            } else {
-                console.log("Producto con id: " + id + " no encontrado");
-                return false;
-            }
-        } catch (error) {
-            console.error("Error al actualizar el producto", error);
-            throw error;
+        const updatedProduct = await productModel.findByIdAndUpdate(id, product, { new: true });
+        if (updatedProduct) {
+            console.log("Producto con id: " + id + " actualizado", updatedProduct);
+            return true;
+        } else {
+            console.log("Producto con id: " + id + " no encontrado");
+            return false;
         }
     }
 
     // eliminar producto
     deleteProduct = async (id) => {
-        try {
-            const deletedProduct = await productModel.findByIdAndDelete(id);
-            if (deletedProduct) {
-                console.log("Producto con id " + id + " eliminado correctamente");
-                return true;
-            } else {
-                console.log("No se encontró el producto a eliminar")
-                return false;
-            }
-        } catch (error) {
-            console.error("Error al eliminar el producto", error);
-            throw error;
+        const deletedProduct = await productModel.findByIdAndDelete(id);
+        if (deletedProduct) {
+            console.log("Producto con id " + id + " eliminado correctamente");
+            return true;
+        } else {
+            console.log("No se encontró el producto a eliminar");
+            return false;
         }
     }
 
     //  verificar código
     isCodeRepeated = async (code) => {
-        try {
-            const existingProduct = await this.model.findOne({ code });
-            return !!existingProduct;
-        } catch (error) {
-            console.error("Error al verificar la repetición del código", error);
-            throw error;
-        }
+        const existingProduct = await this.model.findOne({ code });
+        return !!existingProduct;
     }
 }
+

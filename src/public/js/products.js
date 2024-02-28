@@ -96,9 +96,10 @@ const agregarProductoAlCarrito = async (pid) => {
 
         if (!responseUser.ok) {
             console.log("Error al obtener información del usuario:", userData && userData.error);
+            alert("Ud. no está autorizado a hacer compras en esta página")
             return;
         }
-    
+
         const cid = userData.user.cartId;
 
         if (!cid) {
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addToCartButtons = document.querySelectorAll('.addToCartBtn');
 
     addToCartButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             const productId = button.getAttribute('data-productid');
             agregarProductoAlCarrito(productId);
         });
@@ -251,3 +252,4 @@ const terminarCompra = async(req, res) => {
         
     }
 }
+

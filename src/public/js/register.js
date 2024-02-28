@@ -1,6 +1,7 @@
 
 // register.js
 
+
 const registerUser = async () => {
     try {
         let first_name = document.getElementById("first_name").value;
@@ -9,21 +10,18 @@ const registerUser = async () => {
         let age = document.getElementById("age").value;
         let password = document.getElementById("password").value;
 
-        if (!first_name || !email || !password) {
-            alert("Por favor, complete los datos faltantes");
-            return;
-        }
+        
+            const user = { first_name, last_name, email, age, password };
 
-        const user = { first_name, last_name, email, age, password };
+            const response = await fetch("/api/sessions/register", {
+                method: "POST",
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+                body: JSON.stringify(user)
+            });
+        
 
-        const response = await fetch("/api/sessions/register", {
-            method: "POST",
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-            body: JSON.stringify(user)
-        });
-
-        if (response.ok) {
-            try {
+            if (response.ok) {
+                
                 const data = await response.json();
 
                 if (data && data.status === 'success') {
@@ -36,20 +34,17 @@ const registerUser = async () => {
                 } else {
                     console.log("Error en el registro", data && data.message);
                     showErrorAlert(data && data.message || 'Error en el registro. Inténtalo de nuevo.');
+                    }
+                } else {
+                    console.log("Error en el registro", response.statusText);
+                    showErrorAlert( 'Hubo un problema al procesar la solicitud. Por favor, inténtalo de nuevo.');
                 }
-            } catch (error) {
-                console.error('Error al parsear la respuesta JSON', error);
-                showErrorAlert('Error en el registro. Inténtalo de nuevo.'); 
-            }
-        } else {
-            console.log("Error en el registro", response.statusText);
-            showErrorAlert(response.statusText || 'Error en el registro. Inténtalo de nuevo.');
-        }
+        
     } catch (error) {
         console.error('Error al procesar la solicitud', error);
         showErrorAlert('Error en el registro. Inténtalo de nuevo.'); 
-    }
-};
+    };
+}
 
 function showErrorAlert(message) {
     const registroExitoso = document.getElementById("registroExitoso");
@@ -69,4 +64,5 @@ function showErrorAlert(message) {
 }
 
 document.getElementById("btnRegister").onclick = registerUser;
+
 

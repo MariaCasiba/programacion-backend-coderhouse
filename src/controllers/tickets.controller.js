@@ -6,9 +6,7 @@ class TicketController {
     }
 
     createTicket = async (req, res) => {
-
-        try {
-            
+        try {    
             const { code, purchase_datetime, amount, purchaser } = req.body;
 
             if(!code || !purchase_datetime || !amount || !purchaser) {

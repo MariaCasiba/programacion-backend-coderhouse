@@ -1,11 +1,14 @@
-import  { productService } from "../repositories/service.js"
+import  { productService } from "../repositories/service.js";
+import CustomError from "../services/errors/CustomError.js";
+import generateProductsErrorInfo from "../services/errors/generateProductsErrorInfo.js";
+import EErrors from "../services/errors/enums.js";
 
 class ProductController {
     constructor() {
         this.productService = productService;
     }
 
-
+    
 getProducts = async (req, res) => {
     try {
         const { limit = 10, page = 1, query = {}, sort } = req.query;
@@ -18,7 +21,6 @@ getProducts = async (req, res) => {
         }
 
         const products = await this.productService.getProducts({ limit, page, query, sortOptions });
-        console.log("products: ", products)
         
         res.send({
             status: "success",
@@ -32,35 +34,51 @@ getProducts = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error al obtener los productos en la ruta GET", error);
-        res.status(500).send({ status: "error", message: "Error del servidor al obtener los productos" });
+        const databaseError = CustomError.createError({
+            name: 'Database error',
+            message: 'Error trying to fetch products from database',
+            code: EErrors.DATABASE_ERROR
+        })
+        next(error)
     }
 }
 
 
     // obtener productos por su id
-    getProductById = async (req, res) => {
+    getProductById = async (req, res, next) => {
         try {
             const { pid } = req.params;
             const product = await this.productService.getProductById(pid);
+
             if(product) {
                 res.send({status: "success", payload: product });
             } else {
-                res.status(404).send({status: "error", message: "Error! Producto con id no encontrado!"});
+                const productNotFoundError = CustomError.createError({
+                    name: 'Product not found',
+                    message: `Error! Producto con id ${pid} no encontrado en la base de datos`,
+                    code: EErrors.RESOURCE_NOT_FOUND_ERROR,
+                    cause: "product not found"
+                });
+                throw productNotFoundError
             }
         } catch (error) {
-            console.error("Error en la ruta GET /products/:pid", error);
-            res.status(500).send({ status: "error", message: "Error interno del servidor" });
+            next(error);
         }
     }
 
     // agregar producto
-    addProduct = async (req, res) => {
+    addProduct = async (req, res, next) => {
         try {
             let { title, description, code, price, stock, category, thumbnails, status } = req.body;
             if (!title || !description || !code || !price || !stock || !category) {
-                res.status(400).send({status:"error", message: "Debe completar los campos faltantes"});
-                return false;
+                
+                const error = CustomError.createError({
+                    name: 'Product creation error',
+                    cause: generateProductsErrorInfo({title, description, code, price, stock, category, thumbnails}),
+                    message: 'Error trying to create new product',
+                    code: EErrors.INVALID_TYPES_ERROR
+                })
+                throw error;
             }
             status = !status && true;
             thumbnails = thumbnails || [];
@@ -80,22 +98,25 @@ getProducts = async (req, res) => {
                 res.status(500).send({ status: "error", message: "Error del servidor. No se pudo agregar el producto"});
             }
         } catch (error) {
-            console.error("Error en la ruta POST /products", error);
-            res.status(500).send({
-                status: "error",
-                message: "Error del servidor! No se pudo agregar el producto",
-            });
+            next(error)
         }
     }
 
     // actualizar producto
-    updateProduct = async (req, res) => {
+    updateProduct = async (req, res, next) => {
         try {
             const { pid } = req.params;
             let { title, description, code, price, stock, category, thumbnails, status } = req.body;
+            
             if (!title || !description || !code || !price || !stock || !category) {
-                res.status(400).send({status:"error", message: "Debe completar los campos faltantes"});
-                return false;
+                const error = CustomError.createError({
+                    name: 'Product update error',
+                    cause: generateProductsErrorInfo({title, description, code, price, stock, category, thumbnails}),
+                    message: 'Error trying to update new product',
+                    code: EErrors.INVALID_TYPES_ERROR
+                })
+                throw error;
+                
             }
             status = !status && true;
             thumbnails = thumbnails || [];
@@ -115,11 +136,7 @@ getProducts = async (req, res) => {
                 res.status(500).send({status: "error", message: "Error! No se pudo actualizar el producto"})
             }
         } catch (error) {
-            console.error("Error en la ruta PUT /products/:pid", error);
-            res.status(500).send({
-                status: "error",
-                message: "Error del servidor. No se pudo actualizar el producto",
-            });
+            next(error)
         }
     }
 

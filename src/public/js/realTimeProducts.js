@@ -19,6 +19,7 @@ const addProductForm = document.getElementById('addProductForm');
         const price = document.getElementById('price').value;
         const stock = document.getElementById('stock').value;
         const category = document.getElementById('category').value;
+        const thumbnails = document.getElementById('thumbnails').value;
 
     
         const product = {
@@ -29,12 +30,19 @@ const addProductForm = document.getElementById('addProductForm');
             price: price,
             stock: stock,
             category: category,
+            thumbnails: thumbnails
         }
     
         socket.emit('addProduct', { product });
     });
     
 
+    // error al agregar producto
+    socket.on('error', (error) => {
+        console.error('Error received from server:', error);
+        alert('Error al agregar el producto: ' + error.message);
+        console.log('Error object received from server:', error);
+    });
 
 // escucha productAdded 
     socket.on('productAdded', (newProduct) => {
@@ -56,6 +64,8 @@ const addProductForm = document.getElementById('addProductForm');
                     <b>Code:</b> ${newProduct.code}
                     <b>Stock:</b> ${newProduct.stock}
                     <b>Categoría:</b> ${newProduct.category}
+                    <b>Imagen:</b> ${newProduct.thumbnails}
+
                 </div>
                 <button class="delete-button btn btn-primary my-3" data-product-id="${newProduct._id}">Eliminar</button>
             </div>`;

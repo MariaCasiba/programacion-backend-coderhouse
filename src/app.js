@@ -3,7 +3,6 @@ import exphbs from "express-handlebars";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-//import { ProductManager } from "./daos/file/ProductManagerFs.js";
 import { ProductService } from "./daos/mongo/productsDaoMongo.js";
 import { ChatService } from "./daos/mongo/chatDaoMongo.js";
 import __dirname from "./utils/index.js";
@@ -12,6 +11,11 @@ import { configObject, connectDB } from "./config/index.js";
 // passport
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
+import { handleError } from "./middlewares/error/handleError.js";
+import CustomError from "./services/errors/CustomError.js";
+import generateProductsErrorInfo from "./services/errors/generateProductsErrorInfo.js";
+import EErrors from "./services/errors/enums.js";
+
 const app = express();
 const PORT = configObject.PORT;
 
@@ -20,9 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 //cookies
 app.use(cookieParser());
-app.use(cors())
-
-
+app.use(cors());
 
 // middleware de passport
 initializePassport();
@@ -48,12 +50,14 @@ app.set("views", __dirname + "/views");
 // conexión a mongo
 connectDB();
 
-
 // middleware de errores
+/*
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("error de server");
+  console.error(err);
+  res.status(500).send(`Error Server ${err}`);
 });
+*/
+
 
 // servidor http
 const serverHttp = app.listen(PORT, (err) => {
@@ -90,6 +94,17 @@ socketServer.on("connection", async (socket) => {
         status: product.status,
       };
 
+      // Validación de campos requeridos
+    if (!newProduct.title || !newProduct.description || !newProduct.code || !newProduct.price || !newProduct.stock || !newProduct.category) {
+      const error = CustomError.createError({
+        name: 'Product creation error',
+        cause: generateProductsErrorInfo(newProduct),
+        message: 'Error trying to create new product',
+        code: EErrors.INVALID_TYPES_ERROR
+      });
+      throw error;
+    }
+
       const productAdded = await productService.addProduct(newProduct);
 
       if (productAdded) {
@@ -97,6 +112,7 @@ socketServer.on("connection", async (socket) => {
       }
     } catch (error) {
       console.error("Error al agregar el producto", error);
+      socket.emit("productError", {error: "Error al agregar el producto"})
     }
   });
 
@@ -129,4 +145,7 @@ socketServer.on("connection", async (socket) => {
   });
 
 
+
 });
+
+app.use(handleError)

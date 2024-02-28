@@ -5,10 +5,11 @@ const loginUser = async () => {
         let password = document.getElementById("password").value;
         let email = document.getElementById("email").value;
 
+        /*
         if (!email || !password) {
             alert("Complete los campos de usuario y contraseña.");
             return;
-        }
+        } */
 
         const user = { email, password };
 
@@ -31,7 +32,6 @@ const loginUser = async () => {
                     const token = data.token || getCookie("token");
 
                     localStorage.setItem("token", token);
-
                     location.href = "/products";
                 } else {
                     console.log("Falló el inicio de sesión", data && data.message);

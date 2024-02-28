@@ -2,6 +2,10 @@ import { createToken } from "../utils/jwt.js";
 import { configObject } from "../config/index.js";
 import { createHash } from "../utils/hashPassword.js";
 import { userService } from "../repositories/service.js";
+import CustomError from "../services/errors/CustomError.js";
+import generateUserErrorInfo from "../services/errors/generateUserErrorInfo.js";
+import generateAuthenticationErrorInfo from "../services/errors/generateAuthenticationErrorInfo.js"
+import EErrors from "../services/errors/enums.js";
 
 class UserController {
     constructor() {
@@ -9,17 +13,25 @@ class UserController {
     }
     
     // login del usuario
-    loginUser = async (req, res) => {
-        const { email, password } = req.body;
-    
-        if (!email || !password) {
-            return res.status(400).send({
-                status: "Error",
-                message: "Complete los campos de usuario y contraseña",
-            });
-        }
-    
+    loginUser = async (req, res, next) => {
         try {
+            const { email, password } = req.body;
+    
+            console.log("Email:", email);
+            console.log("Password:", password);
+
+            if (!email || !password) {
+                const error = CustomError.createError({
+                    name: 'User login error',
+                    cause: generateAuthenticationErrorInfo({ email, password }),
+                    message: 'Error trying login user',
+                    code: EErrors.INVALID_TYPES_ERROR
+                })
+                throw error;
+
+            }
+
+        
             let user = null; 
     
             if (email === configObject.admin_email && password === configObject.admin_password) {
@@ -61,39 +73,38 @@ class UserController {
             });
     
         } catch (error) {
-            console.error("Error en el inicio de sesión", error);
-    
-            res.status(500).send({
-                status: "Error",
-                message: "Error interno del servidor",
-            });
-        }
+            next(error)
+            }
     }
     
 
+
     // registro de usuario
-    registerUser = async (req, res) => {
-        const { first_name, last_name, email, age, password } = req.body;
-
-        if (!first_name || !email || !password) {
-            return res.status(400).send({
-                status: "Error",
-                message: "Complete los campos obligatorios",
-            });
-        }
-
-        const userFound = await this.userService.getUserByMail(email);
-
-        
-        if (userFound) {
-            return res.send({
-                status: "Error",
-                error: "Ya existe un usuario registrado con el email proporcionado",
-            });
-        }
-
+    registerUser = async (req, res, next) => {
         try {
+            const { first_name, last_name, email, age, password } = req.body;
+
+            if (!first_name || !email || !password) {
+                const error = CustomError.createError({
+                    name: 'User registration error',
+                    cause: generateUserErrorInfo({first_name, last_name, email}),
+                    message: 'Error trying register user',
+                    code: EErrors.INVALID_TYPES_ERROR
+                })
+                throw error;
+                
+            }
+
+            const userFound = await this.userService.getUserByMail(email);
+
             
+            if (userFound) {
+                return res.send({
+                    status: "Error",
+                    error: "Ya existe un usuario registrado con el email proporcionado",
+                });
+            }
+
             const newUser = {
                 first_name,
                 last_name,
@@ -127,16 +138,11 @@ class UserController {
                     token: token,
                 });
             } else {
-            
                 res.status(401).send({ status: "error", message: "No se pudo registrar el usuario!" });
             }
         } catch (error) {
-            
-            console.error("Error al registrar usuario:", error);
-            res.status(500).send({
-                status: "error",
-                message: "Error interno del servidor al registrar el usuario",
-            });
+            next(error)
+        
         }
     }
 
