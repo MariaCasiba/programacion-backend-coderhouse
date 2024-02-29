@@ -17,9 +17,7 @@ class UserController {
         try {
             const { email, password } = req.body;
     
-            console.log("Email:", email);
-            console.log("Password:", password);
-
+            
             if (!email || !password) {
                 const error = CustomError.createError({
                     name: 'User login error',

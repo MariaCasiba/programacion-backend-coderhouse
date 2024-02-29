@@ -5,11 +5,6 @@ const loginUser = async () => {
         let password = document.getElementById("password").value;
         let email = document.getElementById("email").value;
 
-        /*
-        if (!email || !password) {
-            alert("Complete los campos de usuario y contraseña.");
-            return;
-        } */
 
         const user = { email, password };
 
@@ -23,7 +18,7 @@ const loginUser = async () => {
         });
 
         if (response.ok) {
-            try {
+            
                 const data = await response.json();
 
                 if (data && data.status === "success") {
@@ -36,18 +31,12 @@ const loginUser = async () => {
                 } else {
                     console.log("Falló el inicio de sesión", data && data.message);
                     showLoginError(data && data.message || "Error en el inicio de sesión. Inténtalo de nuevo.");
-                }
-            } catch (error) {
-                console.error("Error al parsear la respuesta JSON", error);
-                showLoginError("Error en el inicio de sesión. Inténtalo de nuevo.");
-            }
-        } else if (response.status === 401) {
-            const data = await response.json();
-            showLoginError(data && data.message || "Error en el inicio de sesión. Inténtalo de nuevo.");
-        } else {
-            console.log("Error en el inicio de sesión", response.statusText);
-            showLoginError(response.statusText || "Error en el inicio de sesión. Inténtalo de nuevo.");
-        }
+                    }
+                } else{
+                        showLoginError("Error en el inicio de sesión. Inténtalo de nuevo.");
+                    }
+                
+        
     } catch (error) {
         console.error("Error al procesar la solicitud", error);
         showLoginError("Error en el inicio de sesión. Inténtalo de nuevo.");
