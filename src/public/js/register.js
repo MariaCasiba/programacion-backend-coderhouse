@@ -1,7 +1,4 @@
 
-// register.js
-
-
 const registerUser = async () => {
     try {
         let first_name = document.getElementById("first_name").value;
@@ -23,6 +20,7 @@ const registerUser = async () => {
             if (response.ok) {
                 
                 const data = await response.json();
+                
 
                 if (data && data.status === 'success') {
                     console.log("Usuario registrado con éxito");
@@ -64,5 +62,4 @@ function showErrorAlert(message) {
 }
 
 document.getElementById("btnRegister").onclick = registerUser;
-
 

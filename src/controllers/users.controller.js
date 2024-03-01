@@ -1,6 +1,6 @@
 import { createToken } from "../utils/jwt.js";
 import { configObject } from "../config/index.js";
-import { createHash } from "../utils/hashPassword.js";
+import { createHash, isValidPassword } from "../utils/hashPassword.js";
 import { userService } from "../repositories/service.js";
 import CustomError from "../services/errors/CustomError.js";
 import generateUserErrorInfo from "../services/errors/generateUserErrorInfo.js";
@@ -13,10 +13,10 @@ class UserController {
     }
     
     // login del usuario
+    
     loginUser = async (req, res, next) => {
         try {
             const { email, password } = req.body;
-    
             
             if (!email || !password) {
                 const error = CustomError.createError({
@@ -28,7 +28,6 @@ class UserController {
                 throw error;
 
             }
-
         
             let user = null; 
     
@@ -40,12 +39,21 @@ class UserController {
                 }
             } else {
 
-                user = await this.userService.loginUser(email, password)
+                user = await this.userService.getUserByMail(email)
+                console.log("user en controller: ", user)
     
                 if (!user) {
                     return res.status(401).send({
                         status: "Error",
-                        message: "Email o contraseña incorrectos",
+                        message: "Email incorrectos",
+                    });
+                }
+
+                if (user && !isValidPassword(password, user)) {
+
+                    return res.status(401).send({
+                        status: "Error",
+                        message: "Contraseña incorrecta",
                     });
                 }
 
@@ -81,6 +89,7 @@ class UserController {
     registerUser = async (req, res, next) => {
         try {
             const { first_name, last_name, email, age, password } = req.body;
+            console.log("Datos del usuario a registrar:", { first_name, last_name, email, age, password });
 
             if (!first_name || !email || !password) {
                 const error = CustomError.createError({
@@ -94,7 +103,6 @@ class UserController {
             }
 
             const userFound = await this.userService.getUserByMail(email);
-
             
             if (userFound) {
                 return res.send({
@@ -102,6 +110,7 @@ class UserController {
                     error: "Ya existe un usuario registrado con el email proporcionado",
                 });
             }
+
 
             const newUser = {
                 first_name,
@@ -139,8 +148,7 @@ class UserController {
                 res.status(401).send({ status: "error", message: "No se pudo registrar el usuario!" });
             }
         } catch (error) {
-            next(error)
-        
+            next(error)     
         }
     }
 

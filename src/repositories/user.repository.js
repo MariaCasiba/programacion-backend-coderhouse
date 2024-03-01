@@ -1,5 +1,4 @@
 import UserService from "../daos/mongo/usersDaoMongo.js";
-import { createHash } from "../utils/hashPassword.js";
 import UserDto from "../dtos/usersDto.js";
 
 class UserRepository {
@@ -21,7 +20,7 @@ class UserRepository {
     // registro de usuario
     registerUser = async (newUser) => {
         try {
-            newUser.password = createHash(newUser.password);
+            //newUser.password = createHash(newUser.password);
             const userRegistered = await this.userService.addUser(newUser);
             return userRegistered;
 
