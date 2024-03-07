@@ -6,10 +6,11 @@ import viewsRouter from './views.router.js';
 import emailRouter from './apis/email.router.js';
 import smsRouter from './apis/sms.router.js';
 import mockRouter from './apis/mocks.router.js';
+import pruebasRouter from './apis/pruebas.js';
+import loggerRouter from './apis/logger.router.js';
 
 
 const router = express.Router();
-
 
 // rutas para manejo de productos
 router.use('/api/products', productsRouter);
@@ -30,6 +31,13 @@ router.use('/api/sms', smsRouter)
 // ruta para mocking
 router.use('/', mockRouter);
 
+// ruta para logger
+router.use("/loggerTest", loggerRouter)
+
+// pruebas
+router.use('/', pruebasRouter )
+
+// comodín
 router.use('*', (req, res) => {
     res.status(404).send('not found')
 })

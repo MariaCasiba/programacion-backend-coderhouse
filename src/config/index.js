@@ -7,7 +7,7 @@ console.log('mode config: ', mode)
 
 
 dotenv.config({
-    path: mode === "development" ? "./.env.development" : "./env.production",
+    path: mode === "development" ? "./.env.development" : "./.env.production",
 });
 
 const configObject = {
@@ -26,12 +26,12 @@ const configObject = {
 
 const connectDB = async () => {
   try {
-    //await mongoose.connect(MONGO, {});
     MongoSingleton.getInstance(configObject.mongo_url)
   } catch (error) {
     console.error("Error al conectar a MongoDB", error);
     throw error;
   }
 };
+
 
 export { connectDB, configObject };

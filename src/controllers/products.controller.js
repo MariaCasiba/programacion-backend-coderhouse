@@ -3,45 +3,47 @@ import CustomError from "../services/errors/CustomError.js";
 import generateProductsErrorInfo from "../services/errors/generateProductsErrorInfo.js";
 import EErrors from "../services/errors/enums.js";
 
+
 class ProductController {
     constructor() {
         this.productService = productService;
     }
 
-    
-getProducts = async (req, res) => {
-    try {
-        const { limit = 10, page = 1, query = {}, sort } = req.query;
-        
-        const sortOptions = {};
-        if (sort === "asc") {
-            sortOptions.price = 1;
-        } else if (sort === "desc") {
-            sortOptions.price = -1;
+    // obtener productos
+    getProducts = async (req, res) => {
+        try {
+            const { limit = 10, page = 1, query = {}, sort } = req.query;
+            
+            const sortOptions = {};
+            if (sort === "asc") {
+                sortOptions.price = 1;
+            } else if (sort === "desc") {
+                sortOptions.price = -1;
+            }
+
+            const products = await this.productService.getProducts({ limit, page, query, sortOptions });
+            
+            res.send({
+                status: "success",
+                payload: products.docs,
+                totalPages: products.totalPages,
+                prevPage: products.hasPrevPage ? products.prevPage : null,
+                nextPage: products.hasNextPage ? products.nextPage : null,
+                page: products.page,
+                hasPrevPage: products.hasPrevPage,
+                hasNextPage: products.hasNextPage
+            });
+
+        } catch (error) {
+            req.logger.error("Error en la ruta GET /products")
+            const databaseError = CustomError.createError({
+                name: 'Database error',
+                message: 'Error trying to fetch products from database',
+                code: EErrors.DATABASE_ERROR
+            })
+            next(error)
         }
-
-        const products = await this.productService.getProducts({ limit, page, query, sortOptions });
-        
-        res.send({
-            status: "success",
-            payload: products.docs,
-            totalPages: products.totalPages,
-            prevPage: products.hasPrevPage ? products.prevPage : null,
-            nextPage: products.hasNextPage ? products.nextPage : null,
-            page: products.page,
-            hasPrevPage: products.hasPrevPage,
-            hasNextPage: products.hasNextPage
-        });
-
-    } catch (error) {
-        const databaseError = CustomError.createError({
-            name: 'Database error',
-            message: 'Error trying to fetch products from database',
-            code: EErrors.DATABASE_ERROR
-        })
-        next(error)
     }
-}
 
 
     // obtener productos por su id
@@ -62,6 +64,7 @@ getProducts = async (req, res) => {
                 throw productNotFoundError
             }
         } catch (error) {
+            req.logger.error("Error en la ruta GET /products/:pid", error);
             next(error);
         }
     }
@@ -93,11 +96,13 @@ getProducts = async (req, res) => {
                 status
             });
             if (productAdded) {
+                req.logger.info("Producto agregado correctamente")
                 res.status(200).send({ status:"ok", message: "Producto agregado correctamente"})
             } else {
                 res.status(500).send({ status: "error", message: "Error del servidor. No se pudo agregar el producto"});
             }
         } catch (error) {
+            req.logger.error("Error en la ruta POST /products", error)
             next(error)
         }
     }
@@ -131,32 +136,31 @@ getProducts = async (req, res) => {
                 status
             });
             if(productUpdated) {
+                req.logger.info("Producto actualizado correctamente")
                 res.status(200).send({status: "success",message: "El producto se actualizó correctamente"});
             } else {
                 res.status(500).send({status: "error", message: "Error! No se pudo actualizar el producto"})
             }
         } catch (error) {
+            req.logger.error("Error en la ruta PUT /products/:pid", error);
             next(error)
         }
     }
 
     // borrar producto
-    deleteProduct = async (req, res) => {
+    deleteProduct = async (req, res, next) => {
         try {
             const { pid } = req.params;
             const productDeleted = await this.productService.deleteProduct(pid);
             if (productDeleted) {
-                console.log("Producto eliminado correctamente");
+                req.logger.info("Producto eliminado correctamente");
                 res.status(200).send({status: "success",message: "El Producto se eliminó correctamente!"});
             } else {
                 res.status(500).send({status: "error",message: "Error. No se pudo eliminar el producto."});
             }
         } catch (error) {
-            console.error("Error en la ruta DELETE /products/:pid", error);
-            res.status(500).send({
-                status: "error",
-                message: "Error del servidor. No se pudo borrar el producto.",
-            });
+            req.logger.error("Error en la ruta DELETE /products/:pid", error);
+            next(error);
         }
     }
 }

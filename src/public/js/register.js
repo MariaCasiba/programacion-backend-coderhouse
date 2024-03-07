@@ -20,7 +20,6 @@ const registerUser = async () => {
             if (response.ok) {
                 
                 const data = await response.json();
-                
 
                 if (data && data.status === 'success') {
                     console.log("Usuario registrado con éxito");
@@ -30,12 +29,13 @@ const registerUser = async () => {
                     registroExitoso.style.display = "block";
                     registroFallido.style.display = "none";
                 } else {
-                    console.log("Error en el registro", data && data.message);
+                    console.error("Error en el registro", data && data.message);
                     showErrorAlert(data && data.message || 'Error en el registro. Inténtalo de nuevo.');
                     }
                 } else {
-                    console.log("Error en el registro", response.statusText);
-                    showErrorAlert( 'Hubo un problema al procesar la solicitud. Por favor, inténtalo de nuevo.');
+                    const errorData = await response.json();
+                    console.error("Error en el registro", response.status, response.statusText);
+                    showErrorAlert( errorData.error || 'Hubo un problema al procesar la solicitud de registro. Por favor, inténtalo de nuevo.');
                 }
         
     } catch (error) {

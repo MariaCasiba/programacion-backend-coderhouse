@@ -1,4 +1,4 @@
-const generateUserErrorInfo = (user) => {
+const generateAuthenticationErrorInfo = (user) => {
     return `One or more fields were incomplete or not valid
         List of required fields:
         * email needs to be a String, received ${user.email}
@@ -6,4 +6,4 @@ const generateUserErrorInfo = (user) => {
     `
 }
 
-export default generateUserErrorInfo 
+export default generateAuthenticationErrorInfo 

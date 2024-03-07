@@ -29,7 +29,7 @@ router.get("/products", passportCall('jwt'), async (req, res) => {
     res.render("products", { products, user});
     
   } catch (error) {
-    console.error("Error al obtener los productos", error);
+    req.logger.error("Error al obtener los productos", error);
     res.status(500).send("Error interno del server");
   }
   
@@ -56,7 +56,7 @@ router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"])
     let realTimeProducts = await productService.getProducts({limit, page, query, sort});
     res.render("realTimeProducts", { realTimeProducts });
   } catch (error) {
-    console.error("Error al obtener productos en tiempo real:", error);
+    req.logger.error("Error al obtener productos en tiempo real:", error);
     res.status(500).render("error", { message: "Error interno del servidor" });
   }
 });
@@ -80,7 +80,7 @@ router.get("/register", async (req, res) => {
 router.get("/profile", passportCall('jwt'), (req, res) => {
   if (req.user) {
     const user = req.user;
-    console.log("datos de usuario en /profile: ", user)
+    req.logger.info("datos de usuario en /profile: ", user)
     res.render("profile", { user })
   } else {
   res.redirect("/login");

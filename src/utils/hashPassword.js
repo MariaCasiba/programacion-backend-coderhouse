@@ -6,7 +6,6 @@ export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSy
 export const isValidPassword = (password, user) => {
 
     if (!user || !password) {
-        console.log("Contraseña o usuario no proporcionado");
         return false;
     }
 

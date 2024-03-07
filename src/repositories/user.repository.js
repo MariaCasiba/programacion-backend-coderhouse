@@ -1,5 +1,6 @@
 import UserService from "../daos/mongo/usersDaoMongo.js";
 import UserDto from "../dtos/usersDto.js";
+import { logger } from "../utils/logger.js";
 
 class UserRepository {
     constructor() {
@@ -12,7 +13,6 @@ class UserRepository {
             const user = await this.userService.getUserByMail(email);
             return user;
         } catch (error) {
-            console.error("Error al intentar iniciar sesión:", error);
             throw error;
         }
     }
@@ -20,12 +20,10 @@ class UserRepository {
     // registro de usuario
     registerUser = async (newUser) => {
         try {
-            //newUser.password = createHash(newUser.password);
             const userRegistered = await this.userService.addUser(newUser);
             return userRegistered;
 
         } catch (error) {
-            console.error("Error al intentar registrar usuario:", error);
             throw error;
         }
     }
@@ -33,12 +31,10 @@ class UserRepository {
     // obtener usuario por email
     getUserByMail = async (email) => {
         try {
-            console.log("Buscando usuario con el email: ", email);
             const user = await this.userService.getUserByMail(email);
-            console.log("Usuario encontrado: ", user);
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por email:", error);
+            logger.error("Error al obtener usuario por email:", error);
             throw error;
         }
     }
@@ -50,7 +46,7 @@ class UserRepository {
             return new UserDto(userData);
 
         } catch (error) {
-            console.error("Error al obtener el usuario actual:", error);
+            logger.error("Error al obtener el usuario actual:", error);
             throw error;
         }
     }

@@ -1,4 +1,5 @@
 import { ChatService } from "../daos/mongo/chatDaoMongo.js"
+import { logger } from "../utils/logger.js";
 
 class ChatRepository {
     constructor(socket) {
@@ -10,7 +11,7 @@ class ChatRepository {
         try {
             return await this.chatService.getMessages();
         } catch (error) {
-            console.error("Error al obtener mensajes", error);
+            logger.warning("Error al obtener mensajes", error);
             throw error;
         }
     }
@@ -20,7 +21,7 @@ class ChatRepository {
         try {
             return await this.chatService.createMessage(message);
         } catch (error) {
-            console.error("Error al crear mensaje", error);
+            logger.warning("Error al crear mensaje", error);
             throw error;
         }
     }

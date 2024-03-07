@@ -7,26 +7,34 @@ import generateUserErrorInfo from "../services/errors/generateUserErrorInfo.js";
 import generateAuthenticationErrorInfo from "../services/errors/generateAuthenticationErrorInfo.js"
 import EErrors from "../services/errors/enums.js";
 
+
 class UserController {
     constructor() {
         this.userService = userService;
     }
     
-    // login del usuario
-    
+    // login 
     loginUser = async (req, res, next) => {
         try {
             const { email, password } = req.body;
             
-            if (!email || !password) {
+            if (!email) {
                 const error = CustomError.createError({
                     name: 'User login error',
-                    cause: generateAuthenticationErrorInfo({ email, password }),
-                    message: 'Error trying login user',
+                    cause: generateAuthenticationErrorInfo({ email, password}),
+                    message: 'Email is missing',
                     code: EErrors.INVALID_TYPES_ERROR
-                })
+                });
                 throw error;
 
+            } else if (!password) {
+                const error = CustomError.createError({
+                    name: 'User login error',
+                    cause: generateAuthenticationErrorInfo({ email, password}),
+                    message: 'Password is missing',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
+                throw error;
             }
         
             let user = null; 
@@ -38,27 +46,33 @@ class UserController {
                     first_name: "Admin"
                 }
             } else {
-
+            
                 user = await this.userService.getUserByMail(email)
-                console.log("user en controller: ", user)
-    
+
                 if (!user) {
-                    return res.status(401).send({
-                        status: "Error",
-                        message: "Email incorrectos",
+                    const error = CustomError.createError({
+                        name: 'User login error',
+                        cause: "Usuario no encontrado con el email  proporcionado",
+                        message: 'Usuario no encontrado con el email proporcionado',
+                        code: EErrors.INVALID_CREDENTIALS_ERROR
                     });
+                    throw error;
                 }
-
+    
                 if (user && !isValidPassword(password, user)) {
-
-                    return res.status(401).send({
-                        status: "Error",
-                        message: "Contraseña incorrecta",
+                    const error = CustomError.createError({
+                        name: 'User login error',
+                        cause: "Contraseña incorrecta para el usuario con el email proporcionado",
+                        message: 'Contraseña incorrecta',
+                        code: EErrors.INVALID_CREDENTIALS_ERROR
                     });
+                    throw error;
+                    
                 }
-
             }
     
+            req.logger.info("usuario autenticado: ", user)
+
             const token = createToken({
                 first_name: user.first_name, 
                 last_name: user.last_name, 
@@ -79,8 +93,9 @@ class UserController {
             });
     
         } catch (error) {
+            req.logger.error("Error en el inicio de sesión.", error)
             next(error)
-            }
+        }
     }
     
 
@@ -89,17 +104,15 @@ class UserController {
     registerUser = async (req, res, next) => {
         try {
             const { first_name, last_name, email, age, password } = req.body;
-            console.log("Datos del usuario a registrar:", { first_name, last_name, email, age, password });
 
             if (!first_name || !email || !password) {
                 const error = CustomError.createError({
                     name: 'User registration error',
                     cause: generateUserErrorInfo({first_name, last_name, email}),
-                    message: 'Error trying register user',
+                    message: 'Error trying register user. Complete the missing fields',
                     code: EErrors.INVALID_TYPES_ERROR
                 })
-                throw error;
-                
+                throw error; 
             }
 
             const userFound = await this.userService.getUserByMail(email);
@@ -107,10 +120,9 @@ class UserController {
             if (userFound) {
                 return res.send({
                     status: "Error",
-                    error: "Ya existe un usuario registrado con el email proporcionado",
+                    error: "A user with the provided email already exists",
                 });
             }
-
 
             const newUser = {
                 first_name,
@@ -122,7 +134,7 @@ class UserController {
             
             const userRegistered = await this.userService.registerUser(newUser);
 
-            console.log("userRegistered en el controller: " , userRegistered)
+            req.logger.info("userRegistered en el controller: " , userRegistered)
             
             if (userRegistered) {
             
@@ -141,13 +153,14 @@ class UserController {
                     httpOnly: true,
                 }).send({
                     status: "success",
-                    message: 'user registered',
+                    message: 'user registered successfully',
                     token: token,
                 });
             } else {
-                res.status(401).send({ status: "error", message: "No se pudo registrar el usuario!" });
+                res.status(401).send({ status: "error", message: "Failed to register user" });
             }
         } catch (error) {
+            req.logger.error("Error en el registro de usuario", error)
             next(error)     
         }
     }
@@ -158,7 +171,7 @@ class UserController {
             res.clearCookie('token');
             res.redirect("/login");
         } catch (error) {
-            console.error("Error al cerrar sesión:", error);
+            req.logger.warning("Error al cerrar sesión:", error);
             res.status(500).send({
                 status: "Error",
                 message: "Error interno del servidor al cerrar sesión",
@@ -174,15 +187,13 @@ class UserController {
             res.send({ user: userDto}) 
 
         } catch (error) {
-            console.error("Error al obtener el usuario actual: ", error);
+            req.logger.error("Error al obtener el usuario actual: ", error);
             res.status(500).send({
                 status: "Error",
                 message: "Error interno del servidor al obtener el usuario actual"
             })
         }
     }
-
-
 }
 
 export default UserController

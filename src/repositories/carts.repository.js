@@ -1,4 +1,5 @@
 import { CartService } from "../daos/mongo/cartsDaoMongo.js"
+import { logger } from "../utils/logger.js";
 
 class CartRepository {
     constructor() {
@@ -10,7 +11,7 @@ class CartRepository {
         try {
             return await this.cartService.createCart();
         } catch (error) {
-            console.error("Error al crear el carrito", error);
+            logger.error("Error al crear el carrito", error);
             throw error;
         }
     }
@@ -20,7 +21,7 @@ class CartRepository {
         try {
             return await this.cartService.getCartById(cid);
         } catch (error) {
-            console.error("Error al obtener el carrito por su id", error);
+            logger.error("Error al obtener el carrito por su id", error);
             throw error;
         }
     }
@@ -30,7 +31,7 @@ class CartRepository {
         try {
             return await this.cartService.getCarts();
         } catch (error) {
-            console.error("Error al obtener los carritos", error);
+            logger.error("Error al obtener los carritos", error);
             throw error;
         }
     }
@@ -40,7 +41,7 @@ class CartRepository {
         try {
             return await this.cartService.deleteCartById(cartId);
         } catch (error) {
-            console.error("Error al eliminar el carrito:", error);
+            logger.error("Error al eliminar el carrito:", error);
             throw error;
         }
     }
@@ -50,7 +51,7 @@ class CartRepository {
         try {
             return await this.cartService.updateCartProducts(cartId, updatedProducts);
         } catch (error) {
-            console.error("Error al actualizar los productos del carrito:", error);
+            logger.error("Error al actualizar los productos del carrito:", error);
             throw error;
         }
     }
@@ -60,7 +61,7 @@ class CartRepository {
         try {
             return await this.cartService.updateProductQuantity(cartId, productId, newQuantity);
         } catch (error) {
-            console.error("Error al actualizar la cantidad del producto en el carrito:", error);
+            logger.error("Error al actualizar la cantidad del producto en el carrito:", error);
             throw error;
         }
     }
@@ -70,7 +71,7 @@ class CartRepository {
         try {
             return await this.cartService.deleteAllProductsInCart(cartId);
         } catch (error) {
-            console.error("Error al eliminar todos los productos del carrito:", error);
+            logger.error("Error al eliminar todos los productos del carrito:", error);
             throw error;
         }
     }
@@ -80,7 +81,7 @@ class CartRepository {
         try {
             return await this.cartService.deleteProductInCart(cartId, productId);
         } catch (error) {
-            console.error("Error al eliminar el producto del carrito:", error);
+            logger.error("Error al eliminar el producto del carrito:", error);
             throw error;
         }
     }

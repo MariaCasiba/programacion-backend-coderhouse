@@ -1,3 +1,5 @@
+
+
 const socket= io();
 
 // websockets
@@ -41,13 +43,13 @@ const addProductForm = document.getElementById('addProductForm');
     socket.on('error', (error) => {
         console.error('Error received from server:', error);
         alert('Error al agregar el producto: ' + error.message);
-        console.log('Error object received from server:', error);
+        console.error('Error object received from server:', error);
     });
 
 // escucha productAdded 
     socket.on('productAdded', (newProduct) => {
 
-        console.log("nuevo producto agregado: ", newProduct);
+        console.error("nuevo producto agregado: ", newProduct);
         
         const rtProductList = document.getElementById("rt-products");
         

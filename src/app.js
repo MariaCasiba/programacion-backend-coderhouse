@@ -8,13 +8,14 @@ import { ChatService } from "./daos/mongo/chatDaoMongo.js";
 import __dirname from "./utils/index.js";
 import indexRouter from "./routes/index.js";
 import { configObject, connectDB } from "./config/index.js";
-// passport
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import { handleError } from "./middlewares/error/handleError.js";
 import CustomError from "./services/errors/CustomError.js";
 import generateProductsErrorInfo from "./services/errors/generateProductsErrorInfo.js";
 import EErrors from "./services/errors/enums.js";
+import { logger, addLogger } from "./utils/logger.js";
+
 
 const app = express();
 const PORT = configObject.PORT;
@@ -30,8 +31,6 @@ app.use(cors());
 initializePassport();
 app.use(passport.initialize());
 
-app.use(indexRouter);
-
 // motor de plantilla handlebars
 app.engine(
   "hbs",
@@ -44,27 +43,22 @@ app.engine(
   })
 );
 
+app.use(addLogger);
+app.use(indexRouter);
+
 app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 
 // conexión a mongo
 connectDB();
 
-// middleware de errores
-/*
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send(`Error Server ${err}`);
-});
-*/
-
 
 // servidor http
 const serverHttp = app.listen(PORT, (err) => {
   if (err) {
-    console.log(err);
+    logger.fatal(err);
   }
-  console.log(`Servidor Express listo en puerto ${PORT}`);
+  logger.info(`Servidor Express listo en puerto ${PORT}`);
 });
 
 // server para websockets
@@ -72,10 +66,10 @@ const socketServer = new Server(serverHttp);
 
 // escucha nueva conexión
 socketServer.on("connection", async (socket) => {
-  console.log("Nuevo cliente conectado");
+  logger.info("Nuevo cliente conectado");
 
   socket.on("ClientMessage", (data) => {
-    console.log("Mensaje del cliente:", data);
+    logger.info("Mensaje del cliente:", data);
   });
 
   const productService = new ProductService();
@@ -111,7 +105,7 @@ socketServer.on("connection", async (socket) => {
         socketServer.emit("productAdded", productAdded);
       }
     } catch (error) {
-      console.error("Error al agregar el producto", error);
+      logger.error("Error al agregar el producto", error);
       socket.emit("productError", {error: "Error al agregar el producto"})
     }
   });
@@ -122,11 +116,11 @@ socketServer.on("connection", async (socket) => {
       const productDeleted = await productService.deleteProduct(productId);
 
       if (productDeleted) {
-        console.log("producto eliminado: ", productId);
+        logger.info("producto eliminado: ", productId);
         socketServer.emit("productDeleted", productId);
       }
     } catch (error) {
-      console.error("Error al eliminar el producto", error);
+      logger.error("Error al eliminar el producto", error);
     }
   });
 
@@ -144,8 +138,7 @@ socketServer.on("connection", async (socket) => {
     socketServer.emit("messages", updatedMessages);
   });
 
-
-
 });
 
 app.use(handleError)
+

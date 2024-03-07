@@ -12,19 +12,6 @@ const transport = nodemailer.createTransport({
     }
 })
 
-/*
-export const sendMail = async (destino, subjet, html) => {
-    return await transport.sendMail({
-        from: 'Este mail lo envía <projecto_ecommerce@gmail.com>',
-        to: 'projecto_ecommerce@gmail.com',
-        subject: 'Enviando email de prueba',
-        html:`<div>
-            <h1>Email de prueba</h1>
-        </div>`
-    })
-}
-*/
-
 
 // dinámico - con attachment
 export const sendMail = async (destino, subject, html) => {

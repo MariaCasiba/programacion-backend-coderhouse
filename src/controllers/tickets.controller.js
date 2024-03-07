@@ -21,10 +21,11 @@ class TicketController {
             };
 
             const ticket = await this.ticketService.createTicket(ticketData);
+            req.logger.info("Ticket creado correctamente")
             res.status(201).json({ message: "Ticket creado correctamente", ticket });
             
         } catch (error) {
-            console.error('Error en la creación del ticket de compra:', error);
+            req.logger.error('Error en la creación del ticket de compra:', error);
             res.status(500).json({ message: "Error interno del servidor al crear el ticket de compra"});
         }
     }

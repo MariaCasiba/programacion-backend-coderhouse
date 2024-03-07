@@ -1,4 +1,5 @@
 import { ProductService } from '../daos/mongo/productsDaoMongo.js';
+import { logger } from '../utils/logger.js';
 
 class ProductRepository {
     constructor() {
@@ -11,7 +12,7 @@ class ProductRepository {
             const products = await this.productsService.getProducts({ limit, page, query, sortOptions });
             return products;
         } catch (error) {
-            console.error("Error al obtener los productos", error);
+            logger.error("Error al obtener los productos", error);
             throw error;
         }
     }
@@ -21,7 +22,7 @@ class ProductRepository {
             const product = await this.productsService.getProductById(pid);
             return product || null;
         } catch (error) {
-            console.error("Error al obtener el producto por su id", error);
+            logger.error("Error al obtener el producto por su id", error);
             throw error;
         }
     }
@@ -40,7 +41,7 @@ class ProductRepository {
             });
             return newProduct;
         } catch (error) {
-            console.error("Error al agregar el producto", error);
+            logger.error("Error al agregar el producto", error);
             throw error;
         }
     }
@@ -50,7 +51,7 @@ class ProductRepository {
             const updatedProduct = await this.productsService.updateProduct(id, product);
             return updatedProduct || null;
         } catch (error) {
-            console.error("Error al actualizar el producto", error);
+            logger.error("Error al actualizar el producto", error);
             throw error;
         }
     }
@@ -60,7 +61,7 @@ class ProductRepository {
             const deletedProduct = await this.productsService.deleteProduct(id);
             return deletedProduct !== null;
         } catch (error) {
-            console.error("Error al eliminar el producto", error);
+            logger.error("Error al eliminar el producto", error);
             throw error;
         }
     }
@@ -70,7 +71,7 @@ class ProductRepository {
             const isRepeated = await this.productsService.isCodeRepeated(code);
             return isRepeated;
         } catch (error) {
-            console.error("Error al verificar la repetición del código", error);
+            logger.error("Error al verificar la repetición del código", error);
             throw error;
         }
     }

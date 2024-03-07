@@ -1,4 +1,5 @@
 import { ticketModel } from "./models/ticket.model.js";
+import { logger } from "../../utils/logger.js";
 
 export class TicketService {
 
@@ -11,7 +12,7 @@ export class TicketService {
 
             const ticket = new ticketModel(data);
             await ticket.save();
-            console.log("Ticket creado:", ticket);
+            logger.info("Ticket creado:", ticket);
             return ticket;
     }
 }

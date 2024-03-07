@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const btnLogout = document.getElementById("btnLogout");
     if (btnLogout) { 
@@ -8,10 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (response.status === 200) {
-                    console.log("Sesión cerrada con éxito");
+                    console.info("Sesión cerrada con éxito");
                     window.location.href = "/login";
                 } else {
-                    console.log("Error al cerrar sesión");
+                    console.error("Error al cerrar sesión");
                 }
             } catch (error) {
                 console.error("Error al cerrar sesión:", error);

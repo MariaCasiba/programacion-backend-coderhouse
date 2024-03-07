@@ -1,4 +1,5 @@
 import { TicketService } from "../daos/mongo/ticketDaoMongo.js";
+import { logger } from "../utils/logger.js";
 
 class TicketRepository {
     constructor() {
@@ -11,7 +12,7 @@ class TicketRepository {
             return await this.ticketService.createTicket(data);
             
         } catch(error) {
-            console.error("Error al crear el ticket: ", error);
+            logger.warning("Error al crear el ticket: ", error);
             throw error;
         }
     }

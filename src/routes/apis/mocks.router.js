@@ -26,11 +26,10 @@ mockRouter.get("/mockingproducts", (req, res) => {
         }
         res.send({status: "success", payload: products})
     } catch (error) {
-        console.error(error)
+        req.logger.error(error)
         res.status(500).send({error: error, message: "No se pudieron obtener los mock products"})
     }
     
-        
 })
 
 

@@ -1,4 +1,5 @@
 import { productModel } from "./models/product.model.js";
+import { logger } from "../../utils/logger.js";
 
 export class ProductService {
     
@@ -30,7 +31,7 @@ export class ProductService {
             category,
             thumbnails,
         });
-        console.log("Producto agregado");
+        logger.info("Producto agregado");
         return newProduct;
     }
 
@@ -38,10 +39,10 @@ export class ProductService {
     updateProduct = async (id, product) => {
         const updatedProduct = await productModel.findByIdAndUpdate(id, product, { new: true });
         if (updatedProduct) {
-            console.log("Producto con id: " + id + " actualizado", updatedProduct);
+            logger.info("Producto con id: " + id + " actualizado", updatedProduct);
             return true;
         } else {
-            console.log("Producto con id: " + id + " no encontrado");
+            logger.error("Producto con id: " + id + " no encontrado");
             return false;
         }
     }
@@ -50,10 +51,10 @@ export class ProductService {
     deleteProduct = async (id) => {
         const deletedProduct = await productModel.findByIdAndDelete(id);
         if (deletedProduct) {
-            console.log("Producto con id " + id + " eliminado correctamente");
+            logger.info("Producto con id " + id + " eliminado correctamente");
             return true;
         } else {
-            console.log("No se encontró el producto a eliminar");
+            logger.error("No se encontró el producto a eliminar");
             return false;
         }
     }

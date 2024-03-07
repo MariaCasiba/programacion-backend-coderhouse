@@ -5,7 +5,6 @@ const loginUser = async () => {
         let password = document.getElementById("password").value;
         let email = document.getElementById("email").value;
 
-
         const user = { email, password };
 
         const response = await fetch("/api/sessions/login", {
@@ -18,33 +17,33 @@ const loginUser = async () => {
         });
 
         if (response.ok) {
-            
-                const data = await response.json();
+            const data = await response.json();
+            if (data && data.status === "success") {
+                console.log("Inicio de sesión exitoso");
 
-                if (data && data.status === "success") {
-                    console.log("Inicio de sesión exitoso");
+                const token = data.token || getCookie("token");
 
-                    const token = data.token || getCookie("token");
-
-                    localStorage.setItem("token", token);
-                    location.href = "/products";
-                } else {
-                    console.log("Falló el inicio de sesión", data && data.message);
-                    showLoginError(data && data.message || "Error en el inicio de sesión. Inténtalo de nuevo.");
-                    }
-                } else{
-                        showLoginError("Error en el inicio de sesión. Inténtalo de nuevo.");
-                    }
-                
-        
+                localStorage.setItem("token", token);
+                location.href = "/products";
+            } else {
+                console.error("Falló el inicio de sesión", data && data.message);
+                showLoginError(data && data.message || "Error en el inicio de sesión. Inténtalo de nuevo.");   
+            }
+        } else {
+            const errorData = await response.json();
+            console.error("Error en la respuesta del servidor:", response.status, response.statusText);
+            showLoginError(errorData.error || "Error en el inicio de sesión. Inténtalo de nuevo.");
+        }
     } catch (error) {
         console.error("Error al procesar la solicitud", error);
         showLoginError("Error en el inicio de sesión. Inténtalo de nuevo.");
     }
 };
 
+
 function showLoginError(message) {
     const errorMessageElement = document.getElementById("loginErrorMessage");
+
     errorMessageElement.textContent = message;
     errorMessageElement.classList.add("alert", "alert-danger");
     errorMessageElement.style.display = "block";
