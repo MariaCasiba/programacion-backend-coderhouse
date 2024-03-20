@@ -23,6 +23,12 @@ router.get("/logout", userController.logoutUser);
 // current user
 router.get("/current", passportCall('jwt'), authorizationJwt(["USER"]), userController.getCurrentUser);
 
+// restore password 
+router.post("/restore-password", userController.restorePassword);
+
+// reset password 
+router.post("/reset-password/:token", userController.resetPassword);
+
 
 
 export default router;

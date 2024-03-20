@@ -2,9 +2,8 @@ import jwt from "jsonwebtoken";
 import { configObject } from "../config/index.js";
 
 
-
 // generar token
-const createToken = user => jwt.sign(user, configObject.jwt_private_key, {expiresIn: '24h'})
+const createToken = (user, expiresIn ) => jwt.sign(user, configObject.jwt_private_key, {expiresIn})
 
 // verificar token
 const authenticationToken = (req, res, next) => {

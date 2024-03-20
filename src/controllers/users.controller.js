@@ -1,10 +1,12 @@
 import { createToken } from "../utils/jwt.js";
+import jwt from 'jsonwebtoken';
 import { configObject } from "../config/index.js";
 import { createHash, isValidPassword } from "../utils/hashPassword.js";
 import { userService } from "../repositories/service.js";
 import CustomError from "../services/errors/CustomError.js";
 import generateUserErrorInfo from "../services/errors/generateUserErrorInfo.js";
-import generateAuthenticationErrorInfo from "../services/errors/generateAuthenticationErrorInfo.js"
+import generateAuthenticationErrorInfo from "../services/errors/generateAuthenticationErrorInfo.js";
+import { sendMail } from "../utils/sendMail.js";
 import EErrors from "../services/errors/enums.js";
 
 
@@ -81,7 +83,7 @@ class UserController {
                 age: user.age,
                 role: user.role, 
                 cartId: user.cartId
-            });
+            }, '24h');
     
             res.cookie('token', token, {
                 maxAge: 60 * 60 * 1000 * 24, 
@@ -103,7 +105,7 @@ class UserController {
     // registro de usuario
     registerUser = async (req, res, next) => {
         try {
-            const { first_name, last_name, email, age, password } = req.body;
+            const { first_name, last_name, email, age, role, password } = req.body;
 
             if (!first_name || !email || !password) {
                 const error = CustomError.createError({
@@ -124,11 +126,14 @@ class UserController {
                 });
             }
 
+            const finalRole = role && role.toLowerCase() === 'premium' ? 'premium' : 'user';
+
             const newUser = {
                 first_name,
                 last_name,
                 email,
                 age,
+                role: finalRole,
                 password: createHash(password),
             };
             
@@ -146,7 +151,7 @@ class UserController {
                     age: userRegistered.age,
                     role: userRegistered.role,
                     cartId: userRegistered.cartId,
-                });
+                }, '24h');
             
                 res.cookie('token', token, {
                     maxAge: 60 * 60 * 1000 * 24,
@@ -194,6 +199,89 @@ class UserController {
             })
         }
     }
+
+    // restore password
+
+    restorePassword = async (req, res) => {
+        try {
+            const { email } = req.body;
+
+            const user = await this.userService.getUserByMail(email);
+
+            if (!user) {
+                return res.status(404).json({ error: "Usuario no encontrado" });
+            }
+
+            const resetToken = createToken({ userId: user._id }, '5m');
+            const resetPasswordLink = `http://localhost:8080/reset-password/${resetToken}`;
+
+            // email
+            const emailBody = `
+                <p>Hola,</p>
+                <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
+                <a href="${resetPasswordLink}">Restablecer contraseña</a>
+                <p>Este enlace expirará en una hora.</p>
+                <p>Si no solicitaste restablecer tu contraseña, puedes ignorar este correo electrónico.</p>
+                <p>Atentamente,<br/>E-commerce</p>
+            `;
+
+            await sendMail(email, 'Restablecer Contraseña', emailBody);
+
+            res.status(200).json({ message: 'Se ha enviado un correo electrónico con las instrucciones para restablecer la contraseña' });
+
+            } catch (error) {
+            console.error("Error al restaurar la contraseña:", error);
+            res.status(500).json({ error: "Error interno del servidor al restaurar la contraseña" });
+        }
+    }
+
+    // reset password
+
+    resetPassword = async (req, res, next) => {
+        try {
+            console.log("Entrando a resetPassword")
+            const { token } = req.params;
+            const { newPassword } = req.body;
+
+            jwt.verify(token, configObject.jwt_private_key, async (err, decoded) => {
+                try {
+                    if (err) {
+                        return res.redirect('/generate-reset-link');
+                    }
+
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    
+                    if (decoded.exp < currentTime) {
+                        return res.redirect('/generate-reset-link');
+                    }
+
+                    const userId = decoded.userId;
+    
+                    const user = await this.userService.getUserById(userId);
+                    if (!user) {
+                        return res.status(404).json({ message: "Usuario no encontrado." });
+                    }
+    
+                    const isSamePassword = isValidPassword(newPassword, user);
+                    if (isSamePassword) {
+                        return res.status(400).json({ error: "SamePasswordError", message: "La nueva contraseña debe ser diferente de la contraseña actual." });
+                    }
+    
+                    user.password = createHash(newPassword);
+                    await user.save();
+                    res.redirect("/login");
+
+                } catch (error) {
+                    console.error('Error al restablecer la contraseña:', error);
+                    return res.status(500).json({ error: 'Error interno del servidor al restablecer la contraseña' });
+                }        
+            });
+        } catch (error) {
+            console.error('Error al restablecer la contraseña:', error);
+            res.status(500).json({ error: 'Error interno del servidor al restablecer la contraseña' });
+        }
+    }
+
 }
 
 export default UserController

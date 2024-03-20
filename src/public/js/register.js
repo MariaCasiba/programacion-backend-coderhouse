@@ -5,10 +5,11 @@ const registerUser = async () => {
         let last_name = document.getElementById("last_name").value;
         let email = document.getElementById("email").value;
         let age = document.getElementById("age").value;
+        let role = document.getElementById("role").value;
         let password = document.getElementById("password").value;
 
         
-            const user = { first_name, last_name, email, age, password };
+            const user = { first_name, last_name, email, age, role, password };
 
             const response = await fetch("/api/sessions/register", {
                 method: "POST",
@@ -57,6 +58,7 @@ function showErrorAlert(message) {
         document.getElementById("last_name").value = "";
         document.getElementById("email").value = "";
         document.getElementById("age").value = "";
+        document.getElementById("role").value = "";
         document.getElementById("password").value = "";
     }, 3000);
 }

@@ -39,6 +39,16 @@ class UserRepository {
         }
     }
 
+    getUserById = async (id) => {
+        try {
+            const user = await this.userService.getUserById(id);
+            return user;
+        } catch (error) {
+            logger.error("Error al obtener usuario por id:", error);
+            throw error;
+        }
+    }
+
     // obtener el usuario actual
     getCurrentUser = async (req) => {
         try {

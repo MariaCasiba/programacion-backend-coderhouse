@@ -1,9 +1,10 @@
 import { Router } from "express";
+import jwt from 'jsonwebtoken';
 import { ProductService } from "../daos/mongo/productsDaoMongo.js";
 import { CartService } from "../daos/mongo/cartsDaoMongo.js";
 import { passportCall } from "../utils/passportCall.js";
 import { authorizationJwt } from "../passport-jwt/jwtPassport.middleware.js";
-
+import { configObject } from "../config/index.js";
 
 const router = Router();
 
@@ -87,5 +88,42 @@ router.get("/profile", passportCall('jwt'), (req, res) => {
   }
 })
 
+// restore password
+router.get("/restore", async (req, res) => {
+  res.render("restore");
+});
+
+
+// reset password
+router.get("/reset-password/:token", async (req, res, next) => {
+  try {
+    const token = req.params.token;
+    
+    jwt.verify(token, configObject.jwt_private_key, (err, decoded) => {
+    
+      if (err) {
+        return res.redirect('/generate-reset-link');
+      }
+  
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      if (decoded.exp < currentTime) {
+        console.log("El token ha caducado");
+        return res.redirect('/generate-reset-link');
+      }
+
+      res.render("resetPassword", { token });
+    })
+
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+})
+
+// generate reset link
+router.get("/generate-reset-link", async (req, res) => {
+  res.render('generate-reset-link')
+}) 
 
 export default router;

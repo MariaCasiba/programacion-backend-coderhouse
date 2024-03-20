@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center mt-3">El link ha expirado</h1>
+            <p class="text-center">Para generar una nueva contraseña, se te enviará un nuevo link a tu email.</p>
+            <form action="/api/sessions/restore-password" method="post" id="restore-password-form">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <button type="button" class="btn btn-dark" id="btnRestorePassword">Enviar nuevo link</button>
+            </form>
+            <p class="mt-3"><a href="/login">Volver al inicio de sesión</a></p>
+        </div>
+    </div>
+</div>
+
+ <script src="/js/restore.js"></script>
