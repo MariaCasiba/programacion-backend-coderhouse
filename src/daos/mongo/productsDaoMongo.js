@@ -20,7 +20,7 @@ export class ProductService {
     }
 
     // agregar producto
-    addProduct = async ({ title, description, code, price, status, stock, category, thumbnails }) => {
+    addProduct = async ({ title, description, code, price, status, stock, category, thumbnails, owner }) => {
         const newProduct = await productModel.create({
             title,
             description,
@@ -30,6 +30,7 @@ export class ProductService {
             stock,
             category,
             thumbnails,
+            owner
         });
         logger.info("Producto agregado");
         return newProduct;

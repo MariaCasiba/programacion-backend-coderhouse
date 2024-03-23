@@ -54,8 +54,8 @@ class UserController {
                 if (!user) {
                     const error = CustomError.createError({
                         name: 'User login error',
-                        cause: "Usuario no encontrado con el email  proporcionado",
-                        message: 'Usuario no encontrado con el email proporcionado',
+                        cause: `Usuario no encontrado con el email proporcionado: ${email}`,
+                        message: `Usuario no encontrado con el email proporcionado: ${email}`,
                         code: EErrors.INVALID_CREDENTIALS_ERROR
                     });
                     throw error;
@@ -64,7 +64,7 @@ class UserController {
                 if (user && !isValidPassword(password, user)) {
                     const error = CustomError.createError({
                         name: 'User login error',
-                        cause: "Contraseña incorrecta para el usuario con el email proporcionado",
+                        cause: `Contraseña incorrecta para el usuario con el email: ${email}`,
                         message: 'Contraseña incorrecta',
                         code: EErrors.INVALID_CREDENTIALS_ERROR
                     });
@@ -209,7 +209,7 @@ class UserController {
             const user = await this.userService.getUserByMail(email);
 
             if (!user) {
-                return res.status(404).json({ error: "Usuario no encontrado" });
+                return res.status(404).json({ error: `Usuario con email: ${email} no encontrado en la base de datos` });
             }
 
             const resetToken = createToken({ userId: user._id }, '5m');

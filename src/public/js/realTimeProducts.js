@@ -1,12 +1,18 @@
 
 
-const socket= io();
+
+const socket= io({
+    auth: {
+        token: localStorage.getItem("token")
+    }
+});
+
 
 // websockets
 socket.on("connect", () => {
     console.log("Cliente conectado");
 
-socket.emit("ClientMessage", "Soy el cliente, estoy usando socket");
+socket.emit("ClientMessage", { message: "Soy el cliente, estoy usando socket"});
 
 
 // obtengo los datos del formulario RealTimeProducts y emito addProduct
@@ -23,19 +29,25 @@ const addProductForm = document.getElementById('addProductForm');
         const category = document.getElementById('category').value;
         const thumbnails = document.getElementById('thumbnails').value;
 
-    
-        const product = {
+        const token = localStorage.getItem("token");
+
+        if (token) {
             
-            title: title,
-            description: description,
-            code: code,
-            price: price,
-            stock: stock,
-            category: category,
-            thumbnails: thumbnails
+            socket.emit('addProduct', {
+                product: {
+                    title: title,
+                    description: description,
+                    code: code,
+                    price: price,
+                    stock: stock,
+                    category: category,
+                    thumbnails: thumbnails
+                },
+                token: token
+            });
+        } else {
+            console.error("No se pudo obtener el token");
         }
-    
-        socket.emit('addProduct', { product });
     });
     
 
@@ -47,9 +59,16 @@ const addProductForm = document.getElementById('addProductForm');
     });
 
 // escucha productAdded 
-    socket.on('productAdded', (newProduct) => {
+    socket.on('productAdded', (data) => {
+        const newProduct = data.product;
+        const user = data.user; 
+        console.log("user en cliente: " , user)
 
-        console.error("nuevo producto agregado: ", newProduct);
+        let owner = "admin"; // Valor por defecto
+        if (user && user.role === "premium") {
+            owner = user.email;
+        }
+        console.log("nuevo producto agregado: ", newProduct);
         
         const rtProductList = document.getElementById("rt-products");
         

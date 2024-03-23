@@ -14,6 +14,8 @@ export const handleError = (err, req, res, next) => {
         case EErrors.INVALID_CREDENTIALS_ERROR: 
             return res.status(401).send({ status: "error", error: err.message });
             break;
+        case EErrors.UNAUTHORIZED_ERROR:
+            return res.status(403).send({ status: "error", error: err.message });
         default:
             return res.status(500).send({status: "error", error: "error server"})
             break;

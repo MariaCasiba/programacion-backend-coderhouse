@@ -1,3 +1,4 @@
+
 import passport from "passport";
 
 export const passportCall = strategy => {
@@ -7,6 +8,9 @@ export const passportCall = strategy => {
             if (!user) return next(info.message ? new Error(info.message) : new Error (info.toString()))
 
             req.user = user
+            console.log("Usuario autenticado en passportCall: ", req.user)
+            
+
             next()
             
         }) (req, res, next)

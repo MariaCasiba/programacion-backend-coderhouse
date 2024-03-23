@@ -27,7 +27,7 @@ class ProductRepository {
         }
     }
 
-    async addProduct({ title, description, code, price, status, stock, category, thumbnails }) {
+    async addProduct({ title, description, code, price, status, stock, category, thumbnails, owner }) {
         try {
             const newProduct = await this.productsService.addProduct({
                 title,
@@ -38,6 +38,7 @@ class ProductRepository {
                 stock,
                 category,
                 thumbnails,
+                owner
             });
             return newProduct;
         } catch (error) {

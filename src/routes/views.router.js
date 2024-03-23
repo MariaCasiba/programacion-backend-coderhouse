@@ -44,14 +44,14 @@ router.get("/products/:pid", passportCall('jwt'),  async (req, res) => {
 });
 
 // carrito
-router.get("/carts/:cid", passportCall('jwt'), authorizationJwt(["USER"]), async (req, res) => {
+router.get("/carts/:cid", passportCall('jwt'), authorizationJwt(["USER", "PREMIUM"]), async (req, res) => {
   const cartId = req.params.cid;
   let cart = await cartService.getCartById(cartId);
   res.render("cart", { cart })
 })
 
 //  productos en tiempo real 
-router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN"]), async (req, res) => {
+router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN", "PREMIUM"]), async (req, res) => {
   try {
     const {limit = 500, page= 1, query = {}, sort} = req.query;
     let realTimeProducts = await productService.getProducts({limit, page, query, sort});

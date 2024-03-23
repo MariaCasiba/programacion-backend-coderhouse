@@ -71,7 +71,14 @@ class ProductController {
 
     // agregar producto
     addProduct = async (req, res, next) => {
+        
         try {
+            
+            const user = req.user;
+            
+            const owner = user && user.role === "premium" ? user.email : "admin";
+            console.log("owner en controller: ", owner)
+
             let { title, description, code, price, stock, category, thumbnails, status } = req.body;
             if (!title || !description || !code || !price || !stock || !category) {
                 
@@ -83,6 +90,8 @@ class ProductController {
                 })
                 throw error;
             }
+
+
             status = !status && true;
             thumbnails = thumbnails || [];
             const productAdded = await this.productService.addProduct({
@@ -93,7 +102,8 @@ class ProductController {
                 stock,
                 category,
                 thumbnails,
-                status
+                status, 
+                owner
             });
             if (productAdded) {
                 req.logger.info("Producto agregado correctamente")
@@ -117,7 +127,7 @@ class ProductController {
                 const error = CustomError.createError({
                     name: 'Product update error',
                     cause: generateProductsErrorInfo({title, description, code, price, stock, category, thumbnails}),
-                    message: 'Error trying to update new product',
+                    message: `Error trying to update product with id ${pid}`,
                     code: EErrors.INVALID_TYPES_ERROR
                 })
                 throw error;
@@ -137,9 +147,9 @@ class ProductController {
             });
             if(productUpdated) {
                 req.logger.info("Producto actualizado correctamente")
-                res.status(200).send({status: "success",message: "El producto se actualizó correctamente"});
+                res.status(200).send({status: "success",message: `El producto con id ${pid} se actualizó correctamente`});
             } else {
-                res.status(500).send({status: "error", message: "Error! No se pudo actualizar el producto"})
+                res.status(500).send({status: "error", message: `Error! No se pudo actualizar el producto con id ${pid}`})
             }
         } catch (error) {
             req.logger.error("Error en la ruta PUT /products/:pid", error);
@@ -153,10 +163,10 @@ class ProductController {
             const { pid } = req.params;
             const productDeleted = await this.productService.deleteProduct(pid);
             if (productDeleted) {
-                req.logger.info("Producto eliminado correctamente");
-                res.status(200).send({status: "success",message: "El Producto se eliminó correctamente!"});
+                req.logger.info(`Producto con id ${pid} eliminado correctamente`);
+                res.status(200).send({status: "success",message: `El producto con id ${pid} se eliminó correctamente!`});
             } else {
-                res.status(500).send({status: "error",message: "Error. No se pudo eliminar el producto."});
+                res.status(500).send({status: "error",message: `Error. No se pudo eliminar el producto con id ${pid}`});
             }
         } catch (error) {
             req.logger.error("Error en la ruta DELETE /products/:pid", error);

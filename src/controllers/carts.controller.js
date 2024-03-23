@@ -24,7 +24,6 @@ class CartController {
             }
         } catch (error) {
             req.logger.error("Error al crear el carrito: ", error);
-            //console.error("Error en la ruta POST /carts", error);
             res.status(500).json({ status: "error", message: "Error del servidor al crear o obtener el carrito." });
         }
     }
@@ -50,7 +49,7 @@ class CartController {
             }
 
         } catch (error) {
-            req.logger.error("Error al obtener el carrito por su id: ", error);
+            req.logger.error(`Error al obtener el carrito con Id ${cid} `, error);
             next(error)
         }
     }
@@ -71,7 +70,6 @@ class CartController {
             }
         } catch (error) {
             req.logger.error("Error al obtener los carritos", error)
-            //console.error("Error en la ruta GET /carts/", error);
             res.status(500).send({
                 status: "error",
                 message: "Error del servidor al obtener los carritos."
@@ -87,21 +85,20 @@ class CartController {
             const deletedCart = await this.cartService.deleteCartById(cid);
         
             if (deletedCart) {
-                req.logger.info("Carrito eliminado correctamente")
+                req.logger.info(`Carrito con id ${cid} eliminado correctamente`)
                 res.status(200).send({
                     status: "success",
                     message: "Carrito eliminado correctamente"
                 });
             } else {
-                req.logger.error("No se encontró el carrito a eliminar")
+                req.logger.error(`No se encontró el carrito con id ${cid} a eliminar`)
                 res.status(404).send({
                     status: "error",
-                    message: "No se encontró el carrito a eliminar"
+                    message: `No se encontró el carrito con id ${cid} a eliminar`
                 });
             }
         } catch (error) {
-            req.logger.error("Error al eliminar el carrito", error)
-            //console.error("Error en la ruta DELETE /carts/:cid", error);
+            req.logger.error(`Error al eliminar el carrito con id ${cid}`, error)
             res.status(500).send({
                 status: "error",
                 message: "Error del servidor al eliminar el carrito"
@@ -116,7 +113,7 @@ class CartController {
     
             if (!cid || !pid) {
                 req.logger.error("El id del carrito o del producto no fueron proporcionados")
-                return res.status(400).send({ status: "error", message: "El ID del carrito o del producto no fueron proporcionados." });
+                return res.status(400).send({ status: "error", message: "El id del carrito o del producto no fueron proporcionados." });
             }
     
             const cart = await this.cartService.getCartById(cid);
@@ -134,21 +131,28 @@ class CartController {
             } else if (!product) {
                 const productNotFoundError = CustomError.createError({
                     name: 'Product not found',
-                    message: 'Error! No se encontró el producto',
+                    message: `Error! No se encontró el producto con id ${pid}`,
                     code: EErrors.RESOURCE_NOT_FOUND_ERROR,
                     cause: 'Producto no encontrado'
                 })
                 throw productNotFoundError;
+
             } else if (!cart) {
                 const cartNotFoundError = CustomError.createError({
                     name: 'Cart not found',
-                    message: 'Error! No se encontró el carrito',
+                    message: `Error! No se encontró el carrito con id ${cid}`,
                     code: EErrors.RESOURCE_NOT_FOUND_ERROR,
                     cause: 'Carrito no encontrado'
                 });
                 throw cartNotFoundError;
             }
     
+            const userEmail = req.user.email;
+            const isPremium = req.user.role === "premium";
+            if (isPremium && product.owner === userEmail ) {
+                return res.status(403).json({ success: false, message: "No puedes agregar tu propio producto al carrito."})
+            }
+
             const existingProduct = cart.products.find(item => item.product.equals(product._id));
     
             if (existingProduct) {
@@ -160,14 +164,14 @@ class CartController {
             const result = await this.cartService.updateCartProducts(cid, cart.products);
     
             if (result) {
-                req.logger.info("El producto se agregó correctamente o se actualizó la cantidad")
-                return res.status(200).send({ status: "success", message: "El producto se agregó correctamente o se actualizó la cantidad." });
+                req.logger.info(`El producto con id ${pid} se agregó correctamente o se actualizó la cantidad`)
+                return res.status(200).send({ status: "success", message: `El producto con id ${pid} se agregó correctamente o se actualizó la cantidad.` });
             } else {
                 const addToCartError = CustomError.createError({
                     name: 'Add to Cart Error',
-                    message: 'No se pudo agregar el producto al carrito',
+                    message: `No se pudo agregar el producto con id ${pid} al carrito`,
                     code: EErrors.DATABASE_ERROR,
-                    cause: 'No se agregó el producto al carrito'
+                    cause: `No se agregó el producto con id ${pid} al carrito`
                 })
                 throw addToCartError;
             }
@@ -184,16 +188,15 @@ class CartController {
             const result = await this.cartService.deleteAllProductsInCart(cid);
 
             if (result) {
-                req.logger.info("Todos los productos del carrito fueron eliminados correctamente")
+                req.logger.info(`Todos los productos del carrito con id ${cid} fueron eliminados correctamente`)
                 res.status(200).send({ status: "success", message: "Todos los productos del carrito fueron eliminados correctamente." });
             } else {
-                req.logger.error("Error! No se pudieron eliminar todos los productos del carrito")
-                res.status(404).send({ status: "error", message: "Error! No se pudieron eliminar todos los productos del carrito." });
+                req.logger.error(`Error! No se pudieron eliminar todos los productos del carrito con id ${cid}`)
+                res.status(404).send({ status: "error", message: `Error! No se pudieron eliminar todos los productos del carrito con id ${cid}` });
             }
 
         } catch (error) {
             req.logger.error("Error del servidor al eliminar todos los productos del carrito", error)
-            //console.error("Error en la ruta DELETE /carts/:cid/products", error);
             res.status(500).send({ status: "error", message: "Error del servidor al eliminar todos los productos del carrito." });
         }
     }
@@ -207,24 +210,23 @@ class CartController {
             const cart = await this.cartService.getCartById(cid);
     
             if (!cart) {
-                req.logger.error("No se encontró el carrito")
-                return res.status(404).send({ status: "error", message: "No se encontró el carrito." });
+                req.logger.error(`No se encontró el carrito con id ${cid}`)
+                return res.status(404).send({ status: "error", message: `No se encontró el carrito con id ${cid}` });
             }  
             
             const updatedProducts = cart.products.filter(item => !item.product.equals(pid));        
             const result = await this.cartService.updateCartProducts(cid, updatedProducts);
     
             if (result) {
-                req.logger.info("Producto eliminado correctamente")
-                return res.status(200).send({ status: "success", message: "Producto eliminado del carrito correctamente." });
+                req.logger.info(`Producto con id ${pid} eliminado correctamente`)
+                return res.status(200).send({ status: "success", message: `Producto con id ${pid} eliminado del carrito ${cid} correctamente` });
             } else {
-                req.logger.error("Error al eliminar el producto del carrito")
-                return res.status(404).send({ status: "error", message: "Error al eliminar el producto del carrito." });
+                req.logger.error(`Error al eliminar el producto con id ${pid} del carrito`)
+                return res.status(404).send({ status: "error", message: `Error al eliminar el producto con id ${pid} del carrito ${cid}`});
             }
         } catch (error) {
-            req.logger.error("Error del servidor al eliminar el producto del carrito", error);
-            //console.error("Error en la ruta DELETE /carts/:cid/products/:pid", error);
-            res.status(500).send({ status: "error", message: "Error del servidor al eliminar el producto del carrito." });
+            req.logger.error(`Error del servidor al eliminar el producto con id ${pid} del carrito ${cid}`, error);
+            res.status(500).send({ status: "error", message: `Error del servidor al eliminar el producto con id ${pid} del carrito ${cid}` });
         }
     }
 
@@ -238,7 +240,7 @@ class CartController {
             if (!cart) {
                 const cartNotFoundError = CustomError.createError({
                     name: 'Cart not found',
-                    message: `Error! No se encontró el carrito con ID ${cid}.`,
+                    message: `Error! No se encontró el carrito con id ${cid}.`,
                     code: EErrors.RESOURCE_NOT_FOUND_ERROR,
                     cause: 'No se encontró el carrito'
                 });
@@ -252,7 +254,7 @@ class CartController {
                 if (!product) {
                     const productNotFoundError = CustomError.createError({
                         name: 'Product not found',
-                        message: `Error! No se encontró el producto con ID ${updatedProduct.productId}.`,
+                        message: `Error! No se encontró el producto con id ${updatedProduct.productId}.`,
                         code: EErrors.RESOURCE_NOT_FOUND_ERROR,
                         cause: 'No se encontró el producto.'
                     });
@@ -263,13 +265,13 @@ class CartController {
             
             const result = await this.cartService.updateCartProducts(cid, cart.products);
             if (result) {
-                req.logger.info("Carrito actualizado correctamente")
-                return res.status(200).send({ status: "success", message: "Carrito actualizado correctamente." });
+                req.logger.info(`Carrito con id ${cid} actualizado correctamente`)
+                return res.status(200).send({ status: "success", message: `Carrito con id ${cid} actualizado correctamente` });
             } else {
-                req.logger.error("Error! No se pudo actualizar el carrito")
+                req.logger.error(`Error! No se pudo actualizar el carrito con id ${cid}`)
                 const updateCartError = CustomError.createError({
                     name: 'Update Cart Error',
-                    message: 'Error! No se pudo actualizar el carrito.',
+                    message: `Error! No se pudo actualizar el carrito con id ${cid}`,
                     code: EErrors.DATABASE_ERROR,
                     cause: 'No se puedo actualizar el carrito'
                 });
@@ -294,16 +296,15 @@ class CartController {
             const result = await this.cartService.updateProductQuantity(cid, pid, quantity);
     
             if (result) {
-                req.logger.info("Cantidad del producto en el carrito actualizada correctamente")
-                res.status(200).send({ status: "success", message: "Cantidad de producto en el carrito actualizada correctamente." });
+                req.logger.info(`Cantidad del producto con id ${pid} en el carrito ${cid} actualizada correctamente`)
+                res.status(200).send({ status: "success", message: `Cantidad del producto con id ${pid} en el carrito ${cid} actualizada correctamente` });
             } else {
-                req.logger.error("Error! No se pudo actualizar la cantidad del producto en el carrito")
-                res.status(404).send({ status: "error", message: "Error! No se pudo actualizar la cantidad del producto en el carrito." });
+                req.logger.error(`Error! No se pudo actualizar la cantidad del producto con id ${pid} en el carrito ${cid}`)
+                res.status(404).send({ status: "error", message: `Error! No se pudo actualizar la cantidad del producto con id ${pid} en el carrito ${cid}` });
             }
         } catch (error) {
-            req.logger.error("Error del servidor al actualizar la cantidad del producto en el carrito")
-            //console.error("Error en la ruta PUT /carts/:cid/products/:pid", error);
-            res.status(500).send({ status: "error", message: "Error del servidor al actualizar la cantidad del producto en el carrito." });
+            req.logger.error(`Error del servidor al actualizar la cantidad del producto con id ${pid} en el carrito ${cid}`)
+            res.status(500).send({ status: "error", message: `Error del servidor al actualizar la cantidad del producto con id ${pid} en el carrito ${cid}` });
         }
     } 
     
@@ -321,8 +322,8 @@ class CartController {
             const cart = await this.cartService.getCartById(cid);
 
             if (!cart) {
-                req.logger.error("Carrito no encontrado")
-                return res.status(404).json({ message: 'Carrito no encontrado' });
+                req.logger.error(`Carrito con id ${cid} no encontrado`)
+                return res.status(404).json({ message: `Carrito con id ${cid} no encontrado`});
             }
 
             req.logger.info("Productos en el carrito:", cart.products);
@@ -366,7 +367,7 @@ class CartController {
             await this.cartService.updateCartProducts(cid, productsOutOfStock);
 
             if (productsSucessfulPurchase.length === 0) {
-                req.logger.error("No se pudo completar  la compra de los productos seleccionados debido a falta de stock: ", productsOutOfStock)
+                req.logger.error("No se pudo completar la compra de los productos seleccionados debido a falta de stock: ", productsOutOfStock)
                 return res.status(400).json({
                     error: "No se pudo completar la compra de los productos seleccionados",
                     productsOutOfStock,
