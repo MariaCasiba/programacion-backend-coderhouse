@@ -8,15 +8,16 @@ export class ProductService {
     }
 
     // obtener todos los productos
+    
     getProducts = async ({ limit, page, query, sortOptions}) => {
         const products = await productModel.paginate(query, { limit, page, sort: sortOptions });
         return products;
     }
 
-    // obtener los productos por id
+
     getProductById = async (pid) => {
         const product = await productModel.findById(pid);
-        return product || "No se encontró el producto con id: " + pid;
+        return product;
     }
 
     // agregar producto

@@ -18,13 +18,16 @@ class ProductRepository {
     }
 
     async getProductById(pid) {
+        console.log("Método getProductById del repositorio de productos iniciado");
         try {
             const product = await this.productsService.getProductById(pid);
             return product || null;
         } catch (error) {
+            console.log("Error en getProductById del repositorio de productos:", error);
             logger.error("Error al obtener el producto por su id", error);
             throw error;
         }
+        console.log("Método getProductById del repositorio de productos iniciado");
     }
 
     async addProduct({ title, description, code, price, status, stock, category, thumbnails, owner }) {

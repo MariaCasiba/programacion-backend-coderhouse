@@ -10,17 +10,23 @@ class ProductController {
     }
 
     // obtener productos
-    getProducts = async (req, res) => {
+
+    getProducts = async (req, res, next) => {
         try {
-            const { limit = 10, page = 1, query = {}, sort } = req.query;
-            
+            const { limit = 10, page = 1, sort } = req.query;
+            const category = req.query.category; 
+    
             const sortOptions = {};
             if (sort === "asc") {
                 sortOptions.price = 1;
             } else if (sort === "desc") {
                 sortOptions.price = -1;
             }
-
+    
+            const query = {}; 
+            if (category) {
+                query.category = category;             }
+    
             const products = await this.productService.getProducts({ limit, page, query, sortOptions });
             
             res.send({
@@ -33,15 +39,15 @@ class ProductController {
                 hasPrevPage: products.hasPrevPage,
                 hasNextPage: products.hasNextPage
             });
-
+    
         } catch (error) {
-            req.logger.error("Error en la ruta GET /products")
+            req.logger.error("Error en la ruta GET /products", error);
             const databaseError = CustomError.createError({
                 name: 'Database error',
                 message: 'Error trying to fetch products from database',
                 code: EErrors.DATABASE_ERROR
-            })
-            next(error)
+            });
+            next(databaseError);
         }
     }
 
@@ -57,11 +63,13 @@ class ProductController {
             } else {
                 const productNotFoundError = CustomError.createError({
                     name: 'Product not found',
-                    message: `Error! Producto con id ${pid} no encontrado en la base de datos`,
+                    cause: "product not found",
+                    message: `No se encontró el producto con id ${pid}`,
                     code: EErrors.RESOURCE_NOT_FOUND_ERROR,
-                    cause: "product not found"
+                    
                 });
-                throw productNotFoundError
+
+                throw productNotFoundError;
             }
         } catch (error) {
             req.logger.error("Error en la ruta GET /products/:pid", error);
