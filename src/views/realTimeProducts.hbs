@@ -3,7 +3,8 @@
     <div class="col">
       <h1 class="m-3 p-2">Real Time Products</h1>
       <h5 class="p-2 m-3">Agregar nuevo producto:</h5>
-
+        <div id="error-message" class="alert alert-danger" role="alert"></div>
+      
       <form id="addProductForm" class="m-2 p-2">
         <div class="mb-3">
           <label for="title" class="form-label">Nombre</label>
@@ -34,6 +35,7 @@
           <input type="text" class="form-control" id="thumbnails">
         </div>
         <button type="submit" class="btn btn-primary mt-3">Agregar producto</button>
+
       </form>
 
       <h2 class="m-3 p-2">Productos</h2>
@@ -61,7 +63,6 @@
                   data-product-id="{{_id}}"
                 >Eliminar</button>
               </div>
-
             </div>
           </li>
         {{/each}}

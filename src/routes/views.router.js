@@ -63,7 +63,7 @@ router.get("/realtimeproducts", passportCall('jwt'), authorizationJwt(["ADMIN", 
 });
 
 // chat 
-router.get("/chat", passportCall('jwt'), authorizationJwt(["USER"]), (req, res) => {
+router.get("/chat", passportCall('jwt'), authorizationJwt(["USER"]), async (req, res) => {
   res.render("chat");
 })
 

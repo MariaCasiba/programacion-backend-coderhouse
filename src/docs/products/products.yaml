@@ -1,0 +1,233 @@
+paths: 
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags: 
+        - Products
+      responses: 
+        "200":
+          description: Los productos fueron obtenidos correctamente. Devuelve un array de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+        "500":
+          description: Error interno del server, usualmente por query defectuosa.
+          content:
+            application/json:
+              schema:
+                type: object
+  
+    post: 
+      summary: Agrega un nuevo producto. Si el producto se agrega correctamente, se devuelve un mensaje de éxito.
+        En caso de error, se devolverá un mensaje de error detallado.
+      tags: 
+        - Products
+      requestBody: 
+        required: true
+        content:
+          application/json:
+              schema:
+              $ref: '#/components/requestBodies/createProduct'
+      responses:
+        '200':
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: 
+                  $ref: '#components/schemas/Product'
+        '400':
+          description: Bad request. Una o más propiedades están incompletas o son inválidas. Devuelve customError con detalle de los datos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                  type: string
+                  description: Descripción del error.
+        '500': 
+          description: Error interno del server.
+
+  
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por su id
+      tags: 
+        - Products
+      parameters: 
+        - name: pid
+          in: path
+          required: true
+          description: el id del producto que se solicita
+          schema: 
+            type: string 
+      responses: 
+        "200":
+          description: El producto con el id especificado fue obtenido exitosamente. Devuelve el producto
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Product'
+        "404":
+          description: El producto con el id especificado no se encontró en la base de datos.
+        "500":
+          description: Error interno del server.
+
+    put:
+      summary: Actualiza un producto existente por su id.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se quiere actualizar.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/createProduct'
+      responses:
+        '200':
+          description: Producto actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error de solicitud. Una o más propiedades son inválidas o están incompletas. Devuelve un error detallado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Descripción del error.
+        '404':
+          description: Producto no encontrado. El producto con el Id especificado no existe.
+        '500':
+          description: Error interno del servidor.
+
+    delete:
+      summary: Elimina un producto por su Id.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se quiere eliminar.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+        '404':
+          description: Producto no encontrado. El producto con el ID especificado no existe.
+        '500':
+          description: Error interno del servidor.
+
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties: 
+        _id: 
+          type: string
+          description: id autogenerado por Mongo
+        title:
+          type: string
+          description: El título del producto.
+        description:
+          type: string
+          description: La descripción del producto.
+        code:
+          type: string
+          description: El código único del producto.
+        price:
+          type: number
+          description: El precio del producto.
+        stock:
+          type: number
+          description: La cantidad de stock disponible.
+        category:
+          type: string
+          description: La categoría del producto.
+        thumbnails:
+          type: array
+          items:
+            type: string
+          description: Las URL de las imágenes del producto.
+        owner: 
+          type: string
+          description: El email del usuario (premium) creador del producto. Por defecto, "admin".
+      
+      example: 
+        _id: 658345c9618b96e1899e1c4d
+        title: falda larga plisada 
+        description: Falda larga ceñida en la parte superior y plisada en la parte inferior, abotonada por delante y con rajas por delante y por detrás.
+        code: abc129
+        price: 45600
+        stock: 12
+        category: faldas y shorts
+        thumbnails: [https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwd539908c/images/h13/Sandro_SFPJU00910-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000]
+        owner: lolalopez@gmail.com
+
+  requestBodies:
+    createProduct:
+      description: Datos requeridos para crear un producto. El campo _id es asignado por Mongo. El campo owner es asignado automáticamente, siendo el email del usuario autenticado para crear el producto; por defecto es "admin".
+      content: 
+        aplication/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                description: El título del producto.
+              description:
+                type: string
+                description: La descripción del producto.
+              code:
+                type: string
+                description: El código único del producto.
+              price:
+                type: number
+                description: El precio del producto.
+              stock:
+                type: number
+                description: La cantidad de stock disponible.
+              category:
+                type: string
+                description: La categoría del producto.
+              thumbnails:
+                type: array
+                items:
+                  type: string
+                description: Las URL de las imágenes del producto.
+              
+      example: 
+        title: falda larga plisada 
+        description: Falda larga ceñida en la parte superior y plisada en la parte inferior, abotonada por delante y con rajas por delante y por detrás.
+        code: abc129
+        price: 45600
+        stock: 12
+        category: faldas y shorts
+        thumbnails: [https://es.sandro-paris.com/dw/image/v2/BCMW_PRD/on/demandware.static/-/Sites-sandro-catalog-master-H13/default/dwd539908c/images/h13/Sandro_SFPJU00910-20_V_1.jpg?sw=1156&cx=221&cy=0&cw=1547&ch=2000]
+

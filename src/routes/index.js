@@ -8,6 +8,7 @@ import smsRouter from './apis/sms.router.js';
 import mockRouter from './apis/mocks.router.js';
 import pruebasRouter from './apis/pruebas.js';
 import loggerRouter from './apis/logger.router.js';
+import { swaggerUiExpress, specs } from '../config/swagger.js';
 
 
 const router = express.Router();
@@ -33,6 +34,9 @@ router.use('/', mockRouter);
 
 // ruta para logger
 router.use("/loggerTest", loggerRouter)
+
+// Rutas para Swagger
+router.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // pruebas
 router.use('/', pruebasRouter )

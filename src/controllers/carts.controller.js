@@ -202,7 +202,6 @@ class CartController {
     }
 
 
-
     // eliminar un producto del carrito
     deleteProductInCart = async (req, res) => {
         try {

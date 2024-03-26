@@ -33,7 +33,7 @@ export class ProductService {
             thumbnails,
             owner
         });
-        logger.info("Producto agregado");
+        logger.info(`Producto agregado: ${newProduct}`);
         return newProduct;
     }
 

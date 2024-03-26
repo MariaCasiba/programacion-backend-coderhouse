@@ -32,8 +32,8 @@ cartsRouter.put("/:cid/products/:pid", passportCall('jwt'), authorizationJwt(["U
 
 // endpoint para eliminar un carrito
 cartsRouter.delete("/:cid", passportCall('jwt'), authorizationJwt(["USER", "PREMIUM"]), cartController.deleteCart);
-// endpoint para obtener carrito por id
 
+// endpoint para obtener carrito por id
 cartsRouter.get("/:cid", passportCall('jwt'), authorizationJwt(["USER", "PREMIUM"]), cartController.getCartById);
 
 // endpoint para finalizar compra y crear ticket

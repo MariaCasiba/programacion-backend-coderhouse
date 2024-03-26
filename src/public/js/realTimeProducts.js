@@ -51,12 +51,6 @@ const addProductForm = document.getElementById('addProductForm');
     });
     
 
-    // error al agregar producto
-    socket.on('error', (error) => {
-        console.error('Error received from server:', error);
-        alert('Error al agregar el producto: ' + error.message);
-        console.error('Error object received from server:', error);
-    });
 
 // escucha productAdded 
     socket.on('productAdded', (data) => {

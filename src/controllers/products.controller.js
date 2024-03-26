@@ -10,7 +10,6 @@ class ProductController {
     }
 
     // obtener productos
-
     getProducts = async (req, res, next) => {
         try {
             const { limit = 10, page = 1, sort } = req.query;
@@ -85,7 +84,6 @@ class ProductController {
             const user = req.user;
             
             const owner = user && user.role === "premium" ? user.email : "admin";
-            console.log("owner en controller: ", owner)
 
             let { title, description, code, price, stock, category, thumbnails, status } = req.body;
             if (!title || !description || !code || !price || !stock || !category) {
@@ -98,7 +96,6 @@ class ProductController {
                 })
                 throw error;
             }
-
 
             status = !status && true;
             thumbnails = thumbnails || [];
@@ -121,6 +118,7 @@ class ProductController {
             }
         } catch (error) {
             req.logger.error("Error en la ruta POST /products", error)
+
             next(error)
         }
     }
